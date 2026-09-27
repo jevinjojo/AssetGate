@@ -1,0 +1,15 @@
+[profile.default]
+src = "src"
+out = "out"
+test = "test"
+script = "script"
+libs = ["lib"]
+solc = "0.8.17"          # pinned to the T-REX / ONCHAINID ecosystem version
+evm_version = "paris"     # 0.8.17 predates PUSH0; paris avoids shanghai opcodes
+optimizer = true
+optimizer_runs = 200
+fs_permissions = [{ access = "read", path = "./" }]
+
+[fmt]
+line_length = 100
+tab_width = 4

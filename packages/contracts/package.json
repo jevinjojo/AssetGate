@@ -1,0 +1,13 @@
+{
+  "name": "@assetgate/contracts",
+  "private": true,
+  "version": "0.1.0",
+  "description": "AssetGate — ERC-3643 security-token contracts",
+  "devDependencies": {
+    "@openzeppelin/contracts": "4.9.6",
+    "@openzeppelin/contracts-upgradeable": "4.9.6",
+    "@onchain-id/solidity": "^2.2.0",
+    "@tokenysolutions/t-rex": "^4.1.0",
+    "solhint": "^5.0.3"
+  }
+}

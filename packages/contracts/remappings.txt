@@ -1,0 +1,5 @@
+@openzeppelin/contracts/=node_modules/@openzeppelin/contracts/
+@openzeppelin/contracts-upgradeable/=node_modules/@openzeppelin/contracts-upgradeable/
+@onchain-id/solidity/=node_modules/@onchain-id/solidity/
+@tokenysolutions/t-rex/=node_modules/@tokenysolutions/t-rex/
+forge-std/=lib/forge-std/src/

@@ -1,0 +1,15 @@
+# Foundry
+packages/contracts/out/
+packages/contracts/cache/
+packages/contracts/broadcast/
+
+# Node
+node_modules/
+
+# Backend DB (Phase 0)
+packages/backend/*.db
+packages/backend/*.db-shm
+packages/backend/*.db-wal
+
+# Env / secrets
+.env
