@@ -1,4 +1,0 @@
-PermissionedTokenTest:test_CompliantTransferSucceeds() (gas: 46257)
-PermissionedTokenTest:test_MintToUnverifiedReverts() (gas: 15657)
-PermissionedTokenTest:test_OnlyOwnerCanWhitelist() (gas: 15235)
-PermissionedTokenTest:test_TransferToUnverifiedReverts() (gas: 15765)
