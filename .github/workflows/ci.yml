@@ -59,14 +59,9 @@ jobs:
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
 
-      - name: Build (so Slither can reuse artifacts)
-        working-directory: packages/contracts
-        run: forge build
-
       - name: Run Slither
         uses: crytic/slither-action@v0.4.0
         with:
           target: packages/contracts
-          ignore-compile: true
           slither-args: '--filter-paths "node_modules|lib"'
           fail-on: high
