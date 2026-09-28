@@ -39,6 +39,10 @@ jobs:
       - name: Gas regression check
         run: forge snapshot --check
 
+      - name: Coverage (informational)
+        run: forge coverage --report summary
+        continue-on-error: true
+
       - name: Solhint
         run: npx solhint 'src/**/*.sol'
 
