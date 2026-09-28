@@ -1,3 +1,8 @@
+IdentityClaimTest:test_ClaimCanBeAddedAndReadByTopic() (gas: 373376)
+IdentityClaimTest:test_DataMismatchIsRejected() (gas: 36559)
+IdentityClaimTest:test_TamperedSignatureIsRejected() (gas: 37130)
+IdentityClaimTest:test_UntrustedSignerIsRejected() (gas: 36954)
+IdentityClaimTest:test_ValidClaimVerifies() (gas: 44121)
 PermissionedTokenTest:test_CompliantTransferSucceeds() (gas: 46257)
 PermissionedTokenTest:test_MintToUnverifiedReverts() (gas: 15657)
 PermissionedTokenTest:test_OnlyOwnerCanWhitelist() (gas: 15235)
