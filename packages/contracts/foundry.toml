@@ -4,12 +4,20 @@ out = "out"
 test = "test"
 script = "script"
 libs = ["lib"]
-solc = "0.8.17"          # pinned to the T-REX / ONCHAINID ecosystem version
-evm_version = "paris"     # 0.8.17 predates PUSH0; paris avoids shanghai opcodes
+solc = "0.8.17"
+evm_version = "paris"
 optimizer = true
 optimizer_runs = 200
-fs_permissions = [{ access = "read", path = "./" }]
+via_ir = true
+fs_permissions = [{ access = "read-write", path = "./deployments" }]
 
 [fmt]
 line_length = 100
 tab_width = 4
+
+[rpc_endpoints]
+anvil = "http://127.0.0.1:8545"
+sepolia = "${SEPOLIA_RPC_URL}"
+
+[etherscan]
+sepolia = { key = "${ETHERSCAN_API_KEY}" }

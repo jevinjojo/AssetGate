@@ -13,3 +13,6 @@ packages/backend/*.db-wal
 
 # Env / secrets
 .env
+
+# keep testnet artifacts, ignore local/ephemeral ones
+packages/contracts/deployments/anvil.json
