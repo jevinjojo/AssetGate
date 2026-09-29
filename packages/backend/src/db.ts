@@ -1,60 +1,53 @@
-import Database from "better-sqlite3";
+import { PrismaClient } from "@prisma/client";
 import { config } from "./config";
+
+import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
+
+const adapter = new PrismaBetterSqlite3({ url: process.env.DATABASE_URL! });
+export const prisma = new PrismaClient({ adapter });
 
 export const ZERO = "0x0000000000000000000000000000000000000000";
 
-export const db = new Database(config.dbFile);
-db.pragma("journal_mode = WAL");
-
-db.exec(`
-  CREATE TABLE IF NOT EXISTS holders (
-    address TEXT PRIMARY KEY,
-    balance TEXT NOT NULL DEFAULT '0'
-  );
-
-  CREATE TABLE IF NOT EXISTS transfers (
-    id           INTEGER PRIMARY KEY AUTOINCREMENT,
-    block_number INTEGER NOT NULL,
-    tx_hash      TEXT NOT NULL,
-    log_index    INTEGER NOT NULL,
-    from_address TEXT NOT NULL,
-    to_address   TEXT NOT NULL,
-    value        TEXT NOT NULL,
-    UNIQUE (tx_hash, log_index)
-  );
-
-  CREATE TABLE IF NOT EXISTS meta (
-    key   TEXT PRIMARY KEY,
-    value TEXT NOT NULL
-  );
-`);
-
-export function getBalance(address: string): bigint {
-  const row = db.prepare("SELECT balance FROM holders WHERE address = ?").get(address) as
-    | { balance: string }
-    | undefined;
+export async function getBalance(address: string): Promise<bigint> {
+  const row = await prisma.holding.findUnique({
+    where: {
+      tokenAddress_holderAddress: {
+        tokenAddress: config.tokenAddress,
+        holderAddress: address,
+      },
+    },
+  });
   return row ? BigInt(row.balance) : 0n;
 }
 
-export function setBalance(address: string, balance: bigint) {
-  db.prepare(
-    `INSERT INTO holders (address, balance) VALUES (?, ?)
-     ON CONFLICT(address) DO UPDATE SET balance = excluded.balance`
-  ).run(address, balance.toString());
+export async function setBalance(address: string, balance: bigint) {
+  await prisma.holding.upsert({
+    where: {
+      tokenAddress_holderAddress: {
+        tokenAddress: config.tokenAddress,
+        holderAddress: address,
+      },
+    },
+    create: {
+      tokenAddress: config.tokenAddress,
+      holderAddress: address,
+      balance: balance.toString(),
+    },
+    update: { balance: balance.toString() },
+  });
 }
 
-export function getMeta(key: string): string | undefined {
-  const row = db.prepare("SELECT value FROM meta WHERE key = ?").get(key) as
-    | { value: string }
-    | undefined;
+export async function getMeta(key: string): Promise<string | undefined> {
+  const row = await prisma.meta.findUnique({ where: { key } });
   return row?.value;
 }
 
-export function setMeta(key: string, value: string) {
-  db.prepare(
-    `INSERT INTO meta (key, value) VALUES (?, ?)
-     ON CONFLICT(key) DO UPDATE SET value = excluded.value`
-  ).run(key, value);
+export async function setMeta(key: string, value: string) {
+  await prisma.meta.upsert({
+    where: { key },
+    create: { key, value },
+    update: { value },
+  });
 }
 
 export interface TransferInput {
@@ -67,29 +60,37 @@ export interface TransferInput {
 }
 
 /**
- * Idempotent + transactional. Inserts the transfer row; only if it was NEW
- * (not a duplicate) does it apply the balance deltas. This makes re-processing
- * the same log safe — a core property the plan calls out for the indexer.
+ * Idempotent + transactional. Inserts the transfer event; only if it was NEW
+ * (not a duplicate) does it apply the balance deltas.
  */
-export const applyTransferTx = db.transaction((t: TransferInput): boolean => {
-  const res = db
-    .prepare(
-      `INSERT OR IGNORE INTO transfers
-        (block_number, tx_hash, log_index, from_address, to_address, value)
-       VALUES (@blockNumber, @txHash, @logIndex, @from, @to, @value)`
-    )
-    .run({
-      blockNumber: t.blockNumber,
-      txHash: t.txHash,
-      logIndex: t.logIndex,
-      from: t.from,
-      to: t.to,
-      value: t.value.toString(),
-    });
+export async function applyTransferTx(t: TransferInput): Promise<boolean> {
+  return prisma.$transaction(async (tx) => {
+    try {
+      await tx.event.create({
+        data: {
+          blockNumber: t.blockNumber,
+          txHash: t.txHash,
+          logIndex: t.logIndex,
+          type: "Transfer",
+          tokenAddress: config.tokenAddress,
+          fromAddress: t.from,
+          toAddress: t.to,
+          value: t.value.toString(),
+        },
+      });
+    } catch (err: any) {
+      if (err.code === "P2002") return false; // unique constraint on (txHash, logIndex) — already processed
+      throw err;
+    }
 
-  if (res.changes === 0) return false; // already processed this log
-
-  if (t.from !== ZERO) setBalance(t.from, getBalance(t.from) - t.value);
-  if (t.to !== ZERO) setBalance(t.to, getBalance(t.to) + t.value);
-  return true;
-});
+    if (t.from !== ZERO) {
+      const bal = await getBalance(t.from);
+      await setBalance(t.from, bal - t.value);
+    }
+    if (t.to !== ZERO) {
+      const bal = await getBalance(t.to);
+      await setBalance(t.to, bal + t.value);
+    }
+    return true;
+  });
+}

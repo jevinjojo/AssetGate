@@ -1,0 +1,57 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite" // swap to "postgresql" + DATABASE_URL later, no code changes
+}
+
+model Token {
+  address     String    @id
+  name        String
+  symbol      String
+  decimals    Int
+  totalSupply String    @default("0")
+  paused      Boolean   @default(false)
+  holdings    Holding[]
+  events      Event[]
+}
+
+model Investor {
+  address  String  @id
+  identity String? // ONCHAINID address
+  country  Int?
+  verified Boolean @default(false)
+}
+
+model Holding {
+  tokenAddress  String
+  holderAddress String
+  balance       String  @default("0")
+  frozen        Boolean @default(false) // full-address freeze
+  frozenTokens  String  @default("0") // partial freeze
+  token         Token   @relation(fields: [tokenAddress], references: [address])
+
+  @@id([tokenAddress, holderAddress])
+}
+
+model Event {
+  id           Int      @id @default(autoincrement())
+  blockNumber  Int
+  txHash       String
+  logIndex     Int
+  type         String
+  tokenAddress String
+  fromAddress  String?
+  toAddress    String?
+  value        String?
+  createdAt    DateTime @default(now())
+  token        Token    @relation(fields: [tokenAddress], references: [address])
+
+  @@unique([txHash, logIndex]) // idempotency key
+}
+
+model Meta {
+  key   String @id
+  value String
+}
