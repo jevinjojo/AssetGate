@@ -6,6 +6,26 @@ import { prisma } from "./db";
 import { client } from "./chain";
 import { tokenReadAbi, registryReadAbi } from "./abi";
 
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
+import { keccak256, encodeAbiParameters, parseAbiParameters } from "viem";
+import { walletClient, account } from "./chain";
+import { registryWriteAbi, claimAbi, complianceReadAbi, moduleAbi } from "./abi";
+
+const TOPIC_KYC = 1n;
+const SCHEME_ECDSA = 1n;
+
+let _identityArtifact: { abi: any; bytecode: { object: `0x${string}` } } | null = null;
+function identityArtifact() {
+  if (_identityArtifact) return _identityArtifact;
+  const p = resolve(process.cwd(), "../contracts/out/Identity.sol/Identity.json");
+  _identityArtifact = JSON.parse(readFileSync(p, "utf8"));
+  return _identityArtifact!;
+}
+
+const read = (address: `0x${string}`, abi: any, functionName: string, args: any[]) =>
+  client.readContract({ address, abi, functionName, args });
+
 const TOKEN = config.tokenAddress;
 
 async function buildCapTable() {
@@ -78,17 +98,18 @@ async function main() {
     });
 
     let verified = false, frozen = false, frozenTokens = "0";
+    let country: number | null = investor?.country ?? null;
     try { verified = Boolean(await client.readContract({ address: config.identityRegistry as `0x${string}`, abi: registryReadAbi, functionName: "isVerified", args: [a] })); } catch {}
     try { frozen = Boolean(await client.readContract({ address: TOKEN as `0x${string}`, abi: tokenReadAbi, functionName: "isFrozen", args: [a] })); } catch {}
     try { frozenTokens = String(await client.readContract({ address: TOKEN as `0x${string}`, abi: tokenReadAbi, functionName: "getFrozenTokens", args: [a] })); } catch {}
-
+    try { country = Number(await client.readContract({ address: config.identityRegistry as `0x${string}`, abi: registryReadAbi, functionName: "investorCountry", args: [a] })); } catch {}
     return {
       address: addr,
       verified,               // live from IdentityRegistry.isVerified
       frozen,                 // live from Token.isFrozen
       frozenTokens,           // live partial-freeze amount
       balance: holding?.balance ?? "0",
-      country: investor?.country ?? null,
+      country: country,
       identity: investor?.identity ?? null,
     };
   });
@@ -99,6 +120,98 @@ async function main() {
     const where = q.type ? { type: String(q.type) } : {};
     const events = await prisma.event.findMany({ where, orderBy: { id: "desc" }, take: limit });
     return { events };
+  });
+
+  // 10.1 — simulated KYC: deploy ONCHAINID -> sign+add claim -> register
+  app.post("/api/v1/kyc", async (req, reply) => {
+    if (!walletClient || !account) { reply.code(500); return { error: "backend signer not configured (set ISSUER_PRIVATE_KEY)" }; }
+    const body = (req.body ?? {}) as { wallet?: string; country?: number };
+    const wallet = (body.wallet ?? "").toLowerCase() as `0x${string}`;
+    const country = Number(body.country ?? 840);
+    if (!wallet) { reply.code(400); return { error: "wallet is required" }; }
+
+    const IR = config.identityRegistry as `0x${string}`;
+
+    // idempotent: already registered?
+    const already = await read(IR, (await import("./abi")).registryReadAbi as any, "contains", [wallet]).catch(() => false);
+    if (already) {
+      const identity = await read(IR, (await import("./abi")).registryReadAbi as any, "identity", [wallet]);
+      return { wallet, identity, verified: true, alreadyRegistered: true };
+    }
+
+    const art = identityArtifact();
+
+    // 1) deploy the investor's ONCHAINID (managed by the backend issuer in V1)
+    const deployHash = await walletClient.deployContract({ abi: art.abi, bytecode: art.bytecode.object, args: [account.address, false] });
+    const deployRc = await client.waitForTransactionReceipt({ hash: deployHash });
+    const identity = deployRc.contractAddress as `0x${string}`;
+
+    // 2) sign + add the KYC claim
+    const data = encodeAbiParameters(parseAbiParameters("string"), ["PASSED_KYC"]);
+    const message = keccak256(encodeAbiParameters(parseAbiParameters("address, uint256, bytes"), [identity, TOPIC_KYC, data]));
+    const signature = await walletClient.signMessage({ account, message: { raw: message } });
+    const addClaimHash = await walletClient.writeContract({
+      address: identity, abi: claimAbi, functionName: "addClaim",
+      args: [TOPIC_KYC, SCHEME_ECDSA, config.claimIssuer as `0x${string}`, signature, data, ""],
+    });
+    await client.waitForTransactionReceipt({ hash: addClaimHash });
+
+    // 3) register in the Identity Registry
+    const regHash = await walletClient.writeContract({
+      address: IR, abi: registryWriteAbi, functionName: "registerIdentity",
+      args: [wallet, identity, country],
+    });
+    await client.waitForTransactionReceipt({ hash: regHash });
+
+    app.log.info({ wallet, identity }, "KYC complete");
+    return { wallet, identity, country, verified: true, txHashes: { deploy: deployHash, addClaim: addClaimHash, register: regHash } };
+  });
+
+  // 10.4 — human-readable preflight: WHY would this transfer fail?
+  app.get("/api/v1/transfer-preflight", async (req) => {
+    const q = req.query as any;
+    const from = String(q.from ?? "").toLowerCase() as `0x${string}`;
+    const to = String(q.to ?? "").toLowerCase() as `0x${string}`;
+    const amount = BigInt(q.amount ?? "0");
+    const T = config.tokenAddress as `0x${string}`;
+    const IR = config.identityRegistry as `0x${string}`;
+    const tokenReadAbi = (await import("./abi")).tokenReadAbi as any;
+    const registryReadAbi = (await import("./abi")).registryReadAbi as any;
+
+    const token = await prisma.token.findUnique({ where: { address: config.tokenAddress } });
+    if (token?.paused) return { allowed: false, reason: "The token is currently paused; transfers are disabled." };
+
+    const [frozenFrom, frozenTo, bal, frozenTokens, verifiedTo] = await Promise.all([
+      read(T, tokenReadAbi, "isFrozen", [from]),
+      read(T, tokenReadAbi, "isFrozen", [to]),
+      read(T, tokenReadAbi, "balanceOf", [from]),
+      read(T, tokenReadAbi, "getFrozenTokens", [from]),
+      read(IR, registryReadAbi, "isVerified", [to]),
+    ]);
+
+    if (frozenFrom) return { allowed: false, reason: "Your wallet is frozen." };
+    if (frozenTo) return { allowed: false, reason: "The recipient's wallet is frozen." };
+    if (amount > BigInt(bal as bigint) - BigInt(frozenTokens as bigint))
+      return { allowed: false, reason: "Amount exceeds your available (unfrozen) balance." };
+    if (!verifiedTo) return { allowed: false, reason: "The recipient is not a verified investor." };
+
+    const compliance = config.compliance as `0x${string}`;
+    const can = await read(compliance, complianceReadAbi, "canTransfer", [from, to, amount]).catch(() => true);
+    if (!can) {
+      const checks: [string, string][] = [
+        [config.countryModule, "The recipient's country is restricted."],
+        [config.balanceModule, "This transfer would exceed the recipient's maximum balance."],
+        [config.holderModule, "This transfer would exceed the maximum number of holders."],
+      ];
+      for (const [addr, reason] of checks) {
+        if (!addr) continue;
+        const ok = await read(addr as `0x${string}`, moduleAbi, "moduleCheck", [from, to, amount, compliance]).catch(() => true);
+        if (!ok) return { allowed: false, reason };
+      }
+      return { allowed: false, reason: "Transfer blocked by compliance rules." };
+    }
+
+    return { allowed: true, reason: "" };
   });
 
   await app.listen({ port: config.apiPort, host: "0.0.0.0" });
