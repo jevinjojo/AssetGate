@@ -1,113 +1,66 @@
-import { useEffect, useState } from "react";
-import {
-  fetchHolders,
-  fetchHealth,
-  type HoldersResponse,
-  type Health,
-} from "./api";
+import { useState } from "react";
+import { useAccount, useChainId, useConnect, useDisconnect, useSwitchChain } from "wagmi";
+import { config } from "./config";
+import { TokenOverview } from "./components/TokenOverview";
+import { CapTable } from "./components/CapTable";
+import { InvestorManager } from "./components/InvestorManager";
+import { IssuerControls } from "./components/IssuerControls";
+import { InvestorPortal } from "./components/InvestorPortal";
 
-function short(addr: string) {
-  return `${addr.slice(0, 6)}…${addr.slice(-4)}`;
-}
-
-function formatBig(raw: string) {
-  const whole = BigInt(raw) / 10n ** 18n;
-  return whole.toLocaleString();
-}
+type Mode = "issuer" | "investor";
+type Tab = "overview" | "investors" | "controls";
 
 export default function App() {
-  const [data, setData] = useState<HoldersResponse | null>(null);
-  const [health, setHealth] = useState<Health | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { address, isConnected } = useAccount();
+  const chainId = useChainId();
+  const { connect, connectors } = useConnect();
+  const { disconnect } = useDisconnect();
+  const { switchChain } = useSwitchChain();
+  const [mode, setMode] = useState<Mode>("issuer");
+  const [tab, setTab] = useState<Tab>("overview");
 
-  useEffect(() => {
-    let active = true;
-
-    async function load() {
-      try {
-        const [holders, hp] = await Promise.all([fetchHolders(), fetchHealth()]);
-        if (!active) return;
-        setData(holders);
-        setHealth(hp);
-        setError(null);
-      } catch (e) {
-        if (!active) return;
-        setError(e instanceof Error ? e.message : "Unknown error");
-      } finally {
-        if (active) setLoading(false);
-      }
-    }
-
-    load();
-    const id = setInterval(load, 3000); // live polling
-    return () => {
-      active = false;
-      clearInterval(id);
-    };
-  }, []);
+  const wrongNetwork = isConnected && chainId !== config.chainId;
 
   return (
     <div className="container">
-      <header>
-        <h1>AssetGate</h1>
-        <p className="subtitle">Phase 0 — Permissioned Token Cap Table</p>
-        {health && (
-          <div className="status">
-            <span className="dot" /> API OK · token {short(health.token)} · indexed block #
-            {health.lastIndexedBlock}
+      <header className="topbar">
+        <div>
+          <h1>AssetGate</h1>
+          <p className="subtitle mono">token {config.token.slice(0, 10)}… · chain {config.chainId}</p>
+        </div>
+        <div className="row">
+          <div className="tabs">
+            <button className={mode === "issuer" ? "active" : ""} onClick={() => setMode("issuer")}>Issuer</button>
+            <button className={mode === "investor" ? "active" : ""} onClick={() => setMode("investor")}>Investor</button>
           </div>
-        )}
+          {!isConnected ? (
+            <button onClick={() => connect({ connector: connectors[0] })}>Connect</button>
+          ) : (
+            <div className="row">
+              <span className="mono small">{address?.slice(0, 6)}…{address?.slice(-4)}</span>
+              <button onClick={() => disconnect()}>Disconnect</button>
+            </div>
+          )}
+        </div>
       </header>
 
-      {loading && <p className="muted">Loading cap table…</p>}
-
-      {error && (
-        <p className="error">
-          Error: {error} — is the API running on port 4000?
-        </p>
+      {wrongNetwork && (
+        <div className="banner">Wrong network ({chainId}). <button onClick={() => switchChain({ chainId: config.chainId })}>Switch to {config.chainId}</button></div>
       )}
 
-      {!loading && !error && data && (
-        data.holderCount === 0 ? (
-          <p className="muted">
-            No holders yet. Deploy + mint, then watch this table update live.
-          </p>
-        ) : (
-          <>
-            <div className="summary">
-              <div>
-                <span className="label">Total Supply</span>
-                <span className="value">{formatBig(data.totalSupply)}</span>
-              </div>
-              <div>
-                <span className="label">Holders</span>
-                <span className="value">{data.holderCount}</span>
-              </div>
-            </div>
-
-            <table>
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Address</th>
-                  <th>Balance</th>
-                  <th>%</th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.holders.map((h, i) => (
-                  <tr key={h.address}>
-                    <td>{i + 1}</td>
-                    <td className="mono">{h.address}</td>
-                    <td>{Number(h.balanceFormatted).toLocaleString()}</td>
-                    <td>{h.percentage.toFixed(2)}%</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </>
-        )
+      {mode === "issuer" ? (
+        <>
+          <nav className="tabs">
+            <button className={tab === "overview" ? "active" : ""} onClick={() => setTab("overview")}>Overview</button>
+            <button className={tab === "investors" ? "active" : ""} onClick={() => setTab("investors")}>Investors</button>
+            <button className={tab === "controls" ? "active" : ""} onClick={() => setTab("controls")}>Controls</button>
+          </nav>
+          {tab === "overview" && (<><TokenOverview /><h2>Cap table</h2><CapTable /></>)}
+          {tab === "investors" && (isConnected && !wrongNetwork ? <InvestorManager /> : <p className="muted">Connect the issuer wallet on chain {config.chainId}.</p>)}
+          {tab === "controls" && (isConnected && !wrongNetwork ? <IssuerControls /> : <p className="muted">Connect the issuer wallet on chain {config.chainId}.</p>)}
+        </>
+      ) : (
+        wrongNetwork ? <p className="muted">Switch to chain {config.chainId} to use the investor portal.</p> : <InvestorPortal />
       )}
     </div>
   );

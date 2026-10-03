@@ -1,30 +1,43 @@
-const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:4000";
+import { config } from "./config";
 
 export interface Holder {
-  address: string;
-  balance: string;
-  balanceFormatted: string;
-  percentage: number;
+  address: string; balance: string; balanceFormatted: string;
+  frozen: boolean; frozenTokens: string; percentage: number;
 }
-export interface HoldersResponse {
-  totalSupply: string;
-  holderCount: number;
-  holders: Holder[];
+export interface CapTable {
+  token: string; name: string | null; symbol: string | null; decimals: number;
+  paused: boolean; totalSupply: string; totalSupplyFormatted: string;
+  holderCount: number; holders: Holder[];
 }
-export interface Health {
-  status: string;
-  token: string;
-  lastIndexedBlock: number;
+export interface Status {
+  address: string; verified: boolean; frozen: boolean; frozenTokens: string;
+  balance: string; country: number | null; identity: string | null;
 }
 
-export async function fetchHolders(): Promise<HoldersResponse> {
-  const res = await fetch(`${API_URL}/api/v1/holders`);
-  if (!res.ok) throw new Error(`API error ${res.status}`);
+async function get<T>(path: string): Promise<T> {
+  const res = await fetch(`${config.apiUrl}${path}`);
+  if (!res.ok) throw new Error(`API ${res.status}`);
   return res.json();
 }
 
-export async function fetchHealth(): Promise<Health> {
-  const res = await fetch(`${API_URL}/api/v1/health`);
-  if (!res.ok) throw new Error(`API error ${res.status}`);
+export const getCapTable = () => get<CapTable>("/api/v1/captable");
+export const getStatus = (addr: string) => get<Status>(`/api/v1/investors/${addr}/status`);
+export const getHealth = () => get<{ status: string; chainId: number; lastIndexedBlock: number }>("/api/v1/health");
+
+export interface Preflight { allowed: boolean; reason: string; }
+
+export async function postKyc(wallet: string, country: number) {
+  const res = await fetch(`${config.apiUrl}/api/v1/kyc`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ wallet, country }),
+  });
+  if (!res.ok) throw new Error(`KYC ${res.status}`);
+  return res.json();
+}
+
+export async function preflight(from: string, to: string, amount: string): Promise<Preflight> {
+  const res = await fetch(`${config.apiUrl}/api/v1/transfer-preflight?from=${from}&to=${to}&amount=${amount}`);
+  if (!res.ok) throw new Error(`preflight ${res.status}`);
   return res.json();
 }
