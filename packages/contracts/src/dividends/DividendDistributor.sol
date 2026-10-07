@@ -19,7 +19,9 @@ contract DividendDistributor {
         uint256 total;
         uint256 claimed;
     }
+    /// @notice All distributions, indexed by id.
     Distribution[] public distributions;
+    /// @notice Whether an account has claimed from a given distribution id.
     mapping(uint256 => mapping(address => bool)) public hasClaimed;
 
     event DistributionCreated(
@@ -33,11 +35,17 @@ contract DividendDistributor {
         uint256 amount
     );
 
+    /// @param _payoutToken ERC-20 used for payouts; the deployer becomes owner.
+
     constructor(address _payoutToken) {
         payoutToken = IERC20(_payoutToken);
         owner = msg.sender;
     }
 
+    /// @notice Create a funded, Merkle-committed dividend distribution.
+    /// @param merkleRoot Root of a StandardMerkleTree of (holder, amount) leaves.
+    /// @param total Amount of payout token pulled from the caller to fund claims.
+    /// @return id The new distribution's index.
     function createDistribution(
         bytes32 merkleRoot,
         uint256 total
@@ -53,6 +61,11 @@ contract DividendDistributor {
         id = distributions.length - 1;
         emit DistributionCreated(id, merkleRoot, total);
     }
+
+    /// @notice Claim your pro-rata dividend for a distribution.
+    /// @param id The distribution index.
+    /// @param amount Your allocated amount (must match the Merkle leaf).
+    /// @param proof Merkle proof for (msg.sender, amount).
 
     function claim(
         uint256 id,

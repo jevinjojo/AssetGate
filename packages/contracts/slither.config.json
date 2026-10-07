@@ -1,0 +1,5 @@
+{
+  "filter_paths": "node_modules|lib",
+  "exclude_informational": false,
+  "fail_on": "high"
+}

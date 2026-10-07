@@ -244,11 +244,11 @@ GitHub Actions runs on every push/PR:
 |     5 | The ERC-3643 token (dual-gate transfers + issuer controls)          |   ✅   |
 |     6 | End-to-end flows & full test suite (fuzz + boundary)                |   ✅   |
 |     7 | Deployment pipeline (Anvil + Sepolia, verified)                     |   ✅   |
-|     8 | Backend indexer & API (cap table)                                   |   ⏳   |
-|     9 | Issuer admin dashboard                                              |   ⏳   |
-|    10 | Investor portal & simulated KYC                                     |   ⏳   |
-|    11 | Corporate actions (dividends & recovery)                            |   ⏳   |
-|    12 | Hardening, docs & demo                                              |   ⏳   |
+|     8 | Backend indexer & API (cap table)                                   |   ✅   |
+|     9 | Issuer admin dashboard                                              |   ✅   |
+|    10 | Investor portal & simulated KYC                                     |   ✅   |
+|    11 | Corporate actions (dividends & recovery)                            |   ✅   |
+|    12 | Hardening, docs & demo                                              |   ✅   |
 
 ---
 
@@ -260,6 +260,13 @@ GitHub Actions runs on every push/PR:
 - [`V2_BACKLOG.md`](./V2_BACKLOG.md) — everything intentionally out of scope for V1
 
 ---
+
+## Demo
+
+See [`DEMO.md`](./DEMO.md) for the full scripted walkthrough (onboard → mint → transfer →
+blocked transfer → freeze/pause → dividend). Screenshots live in `docs/screenshots/`.
+
+[▶ Watch the recorded demo](your-loom-or-youtube-link)
 
 ## Disclaimer
 
