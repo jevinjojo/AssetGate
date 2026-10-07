@@ -6,9 +6,10 @@ import { CapTable } from "./components/CapTable";
 import { InvestorManager } from "./components/InvestorManager";
 import { IssuerControls } from "./components/IssuerControls";
 import { InvestorPortal } from "./components/InvestorPortal";
+import { IssuerDividends } from "./components/IssuerDividends";
 
 type Mode = "issuer" | "investor";
-type Tab = "overview" | "investors" | "controls";
+type Tab = "overview" | "investors" | "controls" | "dividends";
 
 export default function App() {
   const { address, isConnected } = useAccount();
@@ -54,10 +55,12 @@ export default function App() {
             <button className={tab === "overview" ? "active" : ""} onClick={() => setTab("overview")}>Overview</button>
             <button className={tab === "investors" ? "active" : ""} onClick={() => setTab("investors")}>Investors</button>
             <button className={tab === "controls" ? "active" : ""} onClick={() => setTab("controls")}>Controls</button>
+            <button className={tab === "dividends" ? "active" : ""} onClick={() => setTab("dividends")}>Dividends</button>
           </nav>
           {tab === "overview" && (<><TokenOverview /><h2>Cap table</h2><CapTable /></>)}
           {tab === "investors" && (isConnected && !wrongNetwork ? <InvestorManager /> : <p className="muted">Connect the issuer wallet on chain {config.chainId}.</p>)}
           {tab === "controls" && (isConnected && !wrongNetwork ? <IssuerControls /> : <p className="muted">Connect the issuer wallet on chain {config.chainId}.</p>)}
+          {tab === "dividends" && (isConnected && !wrongNetwork ? <IssuerDividends /> : <p className="muted">Connect the issuer wallet.</p>)}
         </>
       ) : (
         wrongNetwork ? <p className="muted">Switch to chain {config.chainId} to use the investor portal.</p> : <InvestorPortal />

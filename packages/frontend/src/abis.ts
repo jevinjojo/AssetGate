@@ -17,3 +17,14 @@ export const identityRegistryAbi = [
 export const tokenTransferAbi = [
   { type: "function", name: "transfer", stateMutability: "nonpayable", inputs: [{ name: "to", type: "address" }, { name: "amount", type: "uint256" }], outputs: [{ type: "bool" }] },
 ] as const;
+
+export const mockUsdcAbi = [
+  { type: "function", name: "approve", stateMutability: "nonpayable", inputs: [{ type: "address" }, { type: "uint256" }], outputs: [{ type: "bool" }] },
+  { type: "function", name: "balanceOf", stateMutability: "view", inputs: [{ type: "address" }], outputs: [{ type: "uint256" }] },
+] as const;
+
+export const distributorAbi = [
+  { type: "function", name: "createDistribution", stateMutability: "nonpayable", inputs: [{ type: "bytes32" }, { type: "uint256" }], outputs: [{ type: "uint256" }] },
+  { type: "function", name: "claim", stateMutability: "nonpayable", inputs: [{ type: "uint256" }, { type: "uint256" }, { type: "bytes32[]" }], outputs: [] },
+  { type: "function", name: "distributions", stateMutability: "view", inputs: [{ type: "uint256" }], outputs: [{ type: "bytes32" }, { type: "uint256" }, { type: "uint256" }] },
+] as const;

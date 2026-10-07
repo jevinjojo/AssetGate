@@ -41,3 +41,16 @@ export async function preflight(from: string, to: string, amount: string): Promi
   if (!res.ok) throw new Error(`preflight ${res.status}`);
   return res.json();
 }
+
+export async function prepareDividend(totalAmount: string) {
+  const res = await fetch(`${config.apiUrl}/api/v1/dividends/prepare`, {
+    method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ totalAmount }),
+  });
+  if (!res.ok) throw new Error(`prepare ${res.status}`);
+  return res.json() as Promise<{ root: string; total: string; recipients: number }>;
+}
+export async function dividendProof(root: string, address: string) {
+  const res = await fetch(`${config.apiUrl}/api/v1/dividends/proof?root=${root}&address=${address}`);
+  if (!res.ok) throw new Error("no allocation");
+  return res.json() as Promise<{ amount: string; proof: string[] }>;
+}

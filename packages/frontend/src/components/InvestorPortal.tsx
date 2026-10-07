@@ -7,6 +7,9 @@ import { useContractAction } from "../hooks";
 import { TxStatus } from "./TxStatus";
 import { getStatus, getCapTable, postKyc, preflight, type Status, type CapTable } from "../api";
 
+import { ClaimDividend } from "./ClaimDividend";
+
+
 export function InvestorPortal() {
   const { address, isConnected } = useAccount();
   const [status, setStatus] = useState<Status | null>(null);
@@ -104,6 +107,7 @@ export function InvestorPortal() {
           </>
         )}
       </section>
+      {status?.verified && <ClaimDividend />}
     </div>
   );
 }
