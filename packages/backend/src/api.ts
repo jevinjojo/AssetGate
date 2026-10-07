@@ -11,6 +11,7 @@ import { resolve } from "node:path";
 import { keccak256, encodeAbiParameters, parseAbiParameters } from "viem";
 import { walletClient, account } from "./chain";
 import { registryWriteAbi, claimAbi, complianceReadAbi, moduleAbi } from "./abi";
+import { StandardMerkleTree } from "@openzeppelin/merkle-tree";
 
 const TOPIC_KYC = 1n;
 const SCHEME_ECDSA = 1n;
@@ -212,6 +213,46 @@ async function main() {
     }
 
     return { allowed: true, reason: "" };
+  });
+
+  // 11.1 — snapshot the cap table and build the dividend Merkle tree
+  app.post("/api/v1/dividends/prepare", async (req, reply) => {
+    const { totalAmount } = (req.body ?? {}) as { totalAmount?: string };
+    if (!totalAmount) { reply.code(400); return { error: "totalAmount (wei) required" }; }
+    const total = BigInt(totalAmount);
+
+    const token = await prisma.token.findUnique({ where: { address: config.tokenAddress } });
+    const supply = BigInt(token?.totalSupply ?? "0");
+    if (supply === 0n) { reply.code(400); return { error: "no supply to distribute to" }; }
+
+    const holdings = await prisma.holding.findMany({ where: { tokenAddress: config.tokenAddress, balance: { not: "0" } } });
+    const values = holdings
+      .map((h) => [h.holderAddress, ((BigInt(h.balance) * total) / supply).toString()] as [string, string])
+      .filter((v) => BigInt(v[1]) > 0n);
+    if (values.length === 0) { reply.code(400); return { error: "no eligible holders" }; }
+
+    const tree = StandardMerkleTree.of(values, ["address", "uint256"]);
+    const allocated = values.reduce((s, v) => s + BigInt(v[1]), 0n); // sum of floors (dust excluded)
+    await prisma.dividend.upsert({
+      where: { root: tree.root },
+      create: { root: tree.root, total: allocated.toString(), tree: JSON.stringify(tree.dump()) },
+      update: {},
+    });
+    return { root: tree.root, total: allocated.toString(), recipients: values.length };
+  });
+
+  // 11.2 — serve a holder's proof for a given distribution root
+  app.get("/api/v1/dividends/proof", async (req, reply) => {
+    const q = req.query as any;
+    const root = String(q.root ?? "");
+    const address = String(q.address ?? "").toLowerCase();
+    const row = await prisma.dividend.findUnique({ where: { root } });
+    if (!row) { reply.code(404); return { error: "distribution not found" }; }
+    const tree = StandardMerkleTree.load(JSON.parse(row.tree));
+    for (const [i, v] of tree.entries()) {
+      if (String(v[0]).toLowerCase() === address) return { amount: String(v[1]), proof: tree.getProof(i) };
+    }
+    reply.code(404); return { error: "address not in distribution" };
   });
 
   await app.listen({ port: config.apiPort, host: "0.0.0.0" });

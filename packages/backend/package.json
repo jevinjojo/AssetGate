@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@fastify/cors": "^10.0.1",
+    "@openzeppelin/merkle-tree": "^1.0.8",
     "@prisma/adapter-better-sqlite3": "^7.10.0",
     "@prisma/client": "7.10.0",
     "dotenv": "^16.4.5",

@@ -55,3 +55,9 @@ model Meta {
   key   String @id
   value String
 }
+
+model Dividend {
+  root  String @id
+  total String
+  tree  String // StandardMerkleTree.dump() JSON
+}
