@@ -1,3 +1,4 @@
+import fastifyRateLimit from '@fastify/rate-limit'
 import Fastify from "fastify";
 import cors from "@fastify/cors";
 import { formatUnits } from "viem";
@@ -64,6 +65,11 @@ async function buildCapTable() {
 
 async function main() {
   const app = Fastify({ logger: true }); // structured logs via pino
+  await app.register(fastifyRateLimit, {
+    max: 5, // limit each IP to 5 requests
+    timeWindow: '1 hour'
+  })
+
   await app.register(cors, { origin: true });
 
   app.get("/api/v1/health", async () => {
@@ -100,10 +106,10 @@ async function main() {
 
     let verified = false, frozen = false, frozenTokens = "0";
     let country: number | null = investor?.country ?? null;
-    try { verified = Boolean(await client.readContract({ address: config.identityRegistry as `0x${string}`, abi: registryReadAbi, functionName: "isVerified", args: [a] })); } catch {}
-    try { frozen = Boolean(await client.readContract({ address: TOKEN as `0x${string}`, abi: tokenReadAbi, functionName: "isFrozen", args: [a] })); } catch {}
-    try { frozenTokens = String(await client.readContract({ address: TOKEN as `0x${string}`, abi: tokenReadAbi, functionName: "getFrozenTokens", args: [a] })); } catch {}
-    try { country = Number(await client.readContract({ address: config.identityRegistry as `0x${string}`, abi: registryReadAbi, functionName: "investorCountry", args: [a] })); } catch {}
+    try { verified = Boolean(await client.readContract({ address: config.identityRegistry as `0x${string}`, abi: registryReadAbi, functionName: "isVerified", args: [a] })); } catch { }
+    try { frozen = Boolean(await client.readContract({ address: TOKEN as `0x${string}`, abi: tokenReadAbi, functionName: "isFrozen", args: [a] })); } catch { }
+    try { frozenTokens = String(await client.readContract({ address: TOKEN as `0x${string}`, abi: tokenReadAbi, functionName: "getFrozenTokens", args: [a] })); } catch { }
+    try { country = Number(await client.readContract({ address: config.identityRegistry as `0x${string}`, abi: registryReadAbi, functionName: "investorCountry", args: [a] })); } catch { }
     return {
       address: addr,
       verified,               // live from IdentityRegistry.isVerified
@@ -256,8 +262,8 @@ async function main() {
   });
 
   await app.listen({ port: config.apiPort, host: "0.0.0.0" });
-    app.log.info(`API on http://localhost:${config.apiPort}`);
-  }
+  app.log.info(`API on http://localhost:${config.apiPort}`);
+}
 
 main().catch((e) => {
   console.error(e);
