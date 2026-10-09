@@ -1,18 +1,23 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
 :root {
-  color-scheme: dark;
-  --bg-base: #09090b;       /* Zinc 950 */
-  --bg-surface: #18181b;    /* Zinc 900 */
-  --bg-hover: #27272a;      /* Zinc 800 */
-  --border-subtle: #27272a;
-  --border-strong: #3f3f46;
-  --text-main: #fafafa;
-  --text-muted: #a1a1aa;
-  --accent: #3b82f6;        /* Blue 500 */
-  --accent-hover: #2563eb;  /* Blue 600 */
+  color-scheme: light;
+  --bg-base: #f8fafc;       /* Slate 50 */
+  --bg-surface: #ffffff;    /* White */
+  --border-subtle: #e2e8f0; /* Slate 200 */
+  --border-strong: #cbd5e1; /* Slate 300 */
+  
+  --text-main: #0f172a;     /* Slate 900 */
+  --text-muted: #64748b;    /* Slate 500 */
+  
+  --accent: #4f46e5;        /* Indigo 600 */
+  --accent-hover: #4338ca;  /* Indigo 700 */
+  
   --success: #10b981;
   --danger: #ef4444;
+  
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
 }
 
 body {
@@ -31,20 +36,20 @@ body {
 }
 
 h1, h2, h3 {
-  font-weight: 600;
-  letter-spacing: -0.02em;
+  font-weight: 700;
+  letter-spacing: -0.025em;
   margin: 0;
   color: var(--text-main);
 }
 
 h1 {
-  font-size: 1.8rem;
+  font-size: 1.85rem;
 }
 
 .subtitle {
   margin: 0.25rem 0 1.5rem;
   color: var(--text-muted);
-  font-size: 0.9rem;
+  font-size: 0.95rem;
 }
 
 /* Status Pill */
@@ -53,13 +58,14 @@ h1 {
   align-items: center;
   gap: 0.5rem;
   font-size: 0.8rem;
-  font-weight: 500;
-  color: var(--text-muted);
+  font-weight: 600;
+  color: var(--text-main);
   margin-bottom: 1.5rem;
-  padding: 0.35rem 0.75rem;
+  padding: 0.4rem 0.8rem;
   background-color: var(--bg-surface);
   border: 1px solid var(--border-subtle);
   border-radius: 9999px;
+  box-shadow: var(--shadow-sm);
 }
 
 .dot {
@@ -88,8 +94,8 @@ h1 {
 }
 
 .summary .value {
-  font-size: 1.75rem;
-  font-weight: 600;
+  font-size: 1.85rem;
+  font-weight: 700;
   color: var(--text-main);
   letter-spacing: -0.02em;
 }
@@ -101,22 +107,26 @@ table {
   border-spacing: 0;
   background-color: var(--bg-surface);
   border: 1px solid var(--border-subtle);
-  border-radius: 8px;
+  border-radius: 12px;
   overflow: hidden;
   margin-top: 1rem;
+  box-shadow: var(--shadow-sm);
 }
 
 th, td {
   text-align: left;
-  padding: 0.85rem 1rem;
+  padding: 1rem 1.25rem;
   border-bottom: 1px solid var(--border-subtle);
   font-size: 0.875rem;
 }
 
 th {
-  background-color: rgba(0,0,0,0.2);
-  font-weight: 500;
+  background-color: #f1f5f9; /* Slate 100 */
+  font-weight: 600;
   color: var(--text-muted);
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
 }
 
 tr:last-child td {
@@ -125,7 +135,7 @@ tr:last-child td {
 
 /* Utilities */
 .mono {
-  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
   font-size: 0.8rem;
 }
 
@@ -144,13 +154,14 @@ tr:last-child td {
 }
 
 .banner {
-  background-color: rgba(239, 68, 68, 0.1);
-  color: #fca5a5;
-  padding: 0.75rem 1rem;
-  border-radius: 6px;
-  border: 1px solid rgba(239, 68, 68, 0.2);
+  background-color: #fef2f2; /* Red 50 */
+  color: #991b1b;            /* Red 800 */
+  padding: 0.85rem 1.25rem;
+  border-radius: 8px;
+  border: 1px solid #fecaca;   /* Red 200 */
   margin-bottom: 1.5rem;
   font-size: 0.875rem;
+  font-weight: 500;
 }
 
 /* Navigation Tabs */
@@ -158,22 +169,22 @@ tr:last-child td {
   display: flex;
   gap: 0.25rem;
   margin: 1.5rem 0;
-  background-color: var(--bg-surface);
-  padding: 0.25rem;
-  border-radius: 8px;
-  border: 1px solid var(--border-subtle);
+  background-color: #e2e8f0; /* Slate 200 */
+  padding: 0.35rem;
+  border-radius: 10px;
   width: fit-content;
 }
 
 .tabs button {
   background: transparent;
   border: none;
-  padding: 0.4rem 1rem;
+  padding: 0.5rem 1.2rem;
   color: var(--text-muted);
-  font-weight: 500;
+  font-weight: 600;
   font-size: 0.875rem;
   border-radius: 6px;
-  transition: all 0.15s ease;
+  transition: all 0.2s ease;
+  box-shadow: none;
 }
 
 .tabs button:hover {
@@ -181,9 +192,9 @@ tr:last-child td {
 }
 
 .tabs button.active {
-  background-color: var(--border-strong);
+  background-color: var(--bg-surface);
   color: var(--text-main);
-  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  box-shadow: var(--shadow-sm);
 }
 
 /* Cards & Panels */
@@ -196,10 +207,11 @@ tr:last-child td {
 .card, .panel {
   display: flex;
   flex-direction: column;
-  padding: 1.25rem;
+  padding: 1.5rem;
   background-color: var(--bg-surface);
   border: 1px solid var(--border-subtle);
-  border-radius: 8px;
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
 }
 
 .card { min-width: 180px; }
@@ -207,18 +219,18 @@ tr:last-child td {
 .grid2 {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 1rem;
+  gap: 1.5rem;
 }
 
 .stack {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.25rem;
 }
 
 .panel h3 {
-  margin: 0 0 1rem;
-  font-size: 1rem;
+  margin: 0 0 1.25rem;
+  font-size: 1.1rem;
 }
 
 /* Forms & Inputs */
@@ -226,20 +238,22 @@ input {
   display: block;
   width: 100%;
   margin: 0.5rem 0;
-  padding: 0.6rem 0.75rem;
-  background-color: var(--bg-base);
+  padding: 0.75rem 1rem;
+  background-color: #f8fafc;
   border: 1px solid var(--border-strong);
-  border-radius: 6px;
+  border-radius: 8px;
   color: var(--text-main);
   font-family: inherit;
   font-size: 0.875rem;
-  transition: border-color 0.15s ease;
+  transition: all 0.2s ease;
   box-sizing: border-box;
 }
 
 input:focus {
   outline: none;
+  background-color: var(--bg-surface);
   border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
 }
 
 .row {
@@ -251,40 +265,41 @@ input:focus {
 /* Buttons */
 button {
   cursor: pointer;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
+  padding: 0.65rem 1.2rem;
+  border-radius: 8px;
   border: 1px solid transparent;
-  background-color: var(--text-main);
-  color: var(--bg-base);
+  background-color: #0f172a; /* Slate 900 - Dark Accent! */
+  color: #ffffff;
   font-family: inherit;
-  font-weight: 500;
+  font-weight: 600;
   font-size: 0.875rem;
-  transition: background-color 0.15s ease, transform 0.1s ease;
+  transition: all 0.15s ease;
+  box-shadow: var(--shadow-sm);
 }
 
 button:hover {
-  background-color: #e5e5e5;
+  background-color: #334155; /* Slate 700 */
 }
 
 button:active {
-  transform: scale(0.98);
+  transform: scale(0.97);
 }
 
 /* Secondary / Outline Buttons */
 .topbar button {
-  background-color: transparent;
+  background-color: var(--bg-surface);
   border: 1px solid var(--border-strong);
   color: var(--text-main);
 }
 
 .topbar button:hover {
-  background-color: var(--bg-surface);
+  background-color: #f1f5f9;
 }
 
 .panel button {
   width: 100%;
   margin-top: 0.5rem;
-  background-color: var(--accent);
+  background-color: var(--accent); /* Indigo */
   color: white;
 }
 
@@ -294,15 +309,15 @@ button:active {
 
 /* Status Box */
 .status-box {
-  margin-top: 1rem;
+  margin-top: 1.25rem;
   font-size: 0.875rem;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  padding: 0.875rem;
-  background-color: var(--bg-base);
+  padding: 1rem;
+  background-color: #f8fafc;
   border: 1px solid var(--border-subtle);
-  border-radius: 6px;
+  border-radius: 8px;
 }
 
 @media (max-width: 640px) {
