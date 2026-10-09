@@ -56,17 +56,15 @@ The full stack is deployed live on Sepolia testnet and cloud infrastructure.
 
 ```mermaid
 flowchart TD
-    Alice([Alice <br/>Verified Investor]) -->|Transfer| Gate1
-
-    subgraph "On-Chain Gating Mechanism"
-    Gate1{Gate 1: Identity Registry}
-    Gate1 -- "Is Bob verified?" --> Gate2{Gate 2: Modular Compliance}
-    Gate1 -. "Not verified" .-> Revert([REVERT])
-    Gate2 -- "Rules satisfied?" --> Transfer[Move Balances]
-    Gate2 -. "Rule violated" .-> Revert
-    end
+    Sender[Sender - Verified Investor] -->|Initiates Transfer| Gate1[Gate 1: Identity Registry]
     
-    Transfer --> Bob([Bob <br/>Recipient])
+    Gate1 -->|Is receiver verified?| Gate2[Gate 2: Modular Compliance]
+    Gate1 -.->|No: Unverified| Revert[Transaction Reverts]
+    
+    Gate2 -->|Do rules pass?| Success[Update Token Balances]
+    Gate2 -.->|No: Rule violated| Revert
+    
+    Success --> Recipient[Recipient - Target Address]
 ```
 
 ---
