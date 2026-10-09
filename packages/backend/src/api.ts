@@ -66,8 +66,8 @@ async function buildCapTable() {
 async function main() {
   const app = Fastify({ logger: true }); // structured logs via pino
   await app.register(fastifyRateLimit, {
-    max: 5, // limit each IP to 5 requests
-    timeWindow: '1 hour'
+    max: 1000, // global limit for normal endpoints
+    timeWindow: '1 minute'
   })
 
   await app.register(cors, { origin: true });
@@ -130,7 +130,14 @@ async function main() {
   });
 
   // 10.1 — simulated KYC: deploy ONCHAINID -> sign+add claim -> register
-  app.post("/api/v1/kyc", async (req, reply) => {
+  app.post("/api/v1/kyc", {
+    config: {
+      rateLimit: {
+        max: 5, // restrict KYC strictly
+        timeWindow: '1 hour'
+      }
+    }
+  }, async (req, reply) => {
     if (!walletClient || !account) { reply.code(500); return { error: "backend signer not configured (set ISSUER_PRIVATE_KEY)" }; }
     const body = (req.body ?? {}) as { wallet?: string; country?: number };
     const wallet = (body.wallet ?? "").toLowerCase() as `0x${string}`;
