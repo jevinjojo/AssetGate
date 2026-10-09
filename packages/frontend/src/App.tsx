@@ -65,6 +65,17 @@ export default function App() {
       ) : (
         wrongNetwork ? <p className="muted">Switch to chain {config.chainId} to use the investor portal.</p> : <InvestorPortal />
       )}
+
+      <footer className="app-footer">
+        <div className="footer-brand">
+          <h4>AssetGate</h4>
+          <p>Institutional-grade tokenization and compliance platform powered by the ERC-3643 standard.</p>
+        </div>
+        <div className="footer-meta">
+          <span className="mono muted">Status: All systems operational</span>
+          <span className="mono muted">Network: Sepolia Testnet</span>
+        </div>
+      </footer>
     </div>
   );
 }
