@@ -18,7 +18,7 @@ Configure topics/issuers/rules → mint to verified investors.
   the agent mints to a verified wallet. Minting to an unverified wallet reverts.
 - **Proven by:** `test_FlowB_IssuanceToVerified`, `test_FlowB_MintToUnverifiedReverts`.
 
-## Flow C — Transfer (the heart)
+## Flow C — Transfer
 
 verified→verified passes; unverified / rule-violating reverts.
 
@@ -36,7 +36,7 @@ Freeze, force-transfer recovery, pause.
   freeze + compliance, still requires a verified recipient); pause halts all transfers.
 - **Proven by:** `test_FlowD_FreezeForceTransferPause`.
 
-## Boundary & Fuzz (6.5)
+## Boundary & Fuzz Testing
 
 - **Exact holder cap:** `test_Boundary_HolderCapExact` (cap = 2; the 3rd new holder reverts).
 - **Exact balance cap:** `test_Boundary_BalanceCapExact` (recipient at cap; +1 reverts).

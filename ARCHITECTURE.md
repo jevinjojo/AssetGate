@@ -4,7 +4,7 @@ AssetGate is a permissioned **security-token** platform built on **ERC-3643 (T-R
 Its defining property: **every transfer is gated on-chain**. A normal ERC-20 transfer just
 moves balances. An ERC-3643 transfer first asks _"is this allowed?"_ and **reverts** if not.
 
-## The Two-Gate Transfer Model (the heart of everything)
+## The Two-Gate Transfer Model
 
 On every `transfer` / `transferFrom` / `mint`, the token runs two checks:
 
@@ -37,7 +37,7 @@ If **either** gate fails, the whole transaction reverts. That is the entire secu
 
 ## The 5 Core Contracts
 
-| #   | Contract                     | Responsibility (in my words)                                                                                                                                                                                                                                                                                      | T-REX path                                                 |
+| #   | Contract                     | Responsibility                                                                                                                                                                                                                                                                                                    | T-REX path                                                 |
 | --- | ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
 | 1   | **Token**                    | ERC-20-compatible token whose transfer is overridden to consult Gate 1 + Gate 2 before moving balances. Also holds the privileged issuer controls regulators require: `freeze`, `freezePartialTokens`, `forcedTransfer`, `pause`, `mint`, `burn`.                                                                 | `contracts/token/IToken.sol`                               |
 | 2   | **Identity Registry**        | The "who may hold this token" list. Maps each investor wallet → their ONCHAINID + country, and answers `isVerified(address)` by checking that their identity holds all required claims from trusted issuers. Backed by a shared **Identity Registry Storage** so multiple tokens can reuse one investor registry. | `contracts/registry/interface/IIdentityRegistry.sol`       |
@@ -64,14 +64,6 @@ If **either** gate fails, the whole transaction reverts. That is the entire secu
 - **Investor** — controls their ONCHAINID and holds/transfers the token.
 - **Issuer / Agent** — configures required claim topics + trusted issuers, sets compliance rules, mints, and operates freeze / force-transfer / pause.
 
-## How this maps to what we've built so far
+## Implementation Summary
 
-- **Phase 0** shipped a deliberately minimal `PermissionedToken` whose single `whitelist` mapping stands in for _both_ gates. It proved the pipe: chain → indexer → DB → API → live cap table.
-- **Phase 2–5** replace that one mapping with the real machinery:
-  - the `whitelist` becomes **Gate 1** (Identity Registry + ONCHAINID + claims + trusted issuers + claim topics),
-  - and adds **Gate 2** (Modular Compliance rule modules),
-  - inside a real **ERC-3643 Token** with full issuer controls.
-
-## One-paragraph anchor
-
-> ERC-3643 is a permissioned security-token standard where every transfer is gated by two checks: an Identity Registry (is the receiver a verified investor, proven by signed claims on their ONCHAINID from a trusted issuer?) and a Modular Compliance module (does the transfer satisfy the rules — holder limits, country, balance caps, lockups?). If either fails, the transfer reverts. AssetGate is the product around that engine.
+ERC-3643 provides a permissioned security-token standard where every transfer is strictly gated by two conditions: an Identity Registry (verifying the receiver as a compliant investor via signed claims on their ONCHAINID) and a Modular Compliance module (ensuring the transfer adheres to holder limits, country restrictions, and balance caps). If either condition is not met, the transaction reverts at the contract level. AssetGate implements this engine to provide a fully compliant, production-ready tokenization platform.

@@ -1,7 +1,7 @@
 # AssetGate — Identity & Claims (ONCHAINID)
 
 ERC-3643 answers "is this person allowed to hold the token?" by delegating to **ONCHAINID**
-(ERC-734 keys + ERC-735 claims). This note explains the model we rely on.
+(ERC-734 keys + ERC-735 claims). This document explains the identity model.
 
 ## Identity ≠ wallet
 
@@ -43,7 +43,7 @@ addClaim(topic, scheme, issuer, signature, data, uri);
 The claim id is deterministic: `keccak256(abi.encode(issuer, topic))` — so a newer claim from the
 same issuer on the same topic overwrites the old one.
 
-## The signature scheme (get this exactly right)
+## The signature scheme
 
 The issuer signs:
 
@@ -57,14 +57,14 @@ Verification (`ClaimIssuer.isClaimValid`) recovers the signer from `signature` a
 the recovered address holds a **CLAIM key** on the issuer. If either the hash doesn't match
 (tampered sig / changed data) or the signer isn't a claim key (untrusted issuer) → **false**.
 
-## The on-chain / off-chain PII boundary (why this is elegant)
+## The on-chain / off-chain PII boundary
 
 The claim `data` stores an **attestation**, not the person's name or passport. The real PII
 lives off-chain with the KYC provider. So the chain proves _"a trusted issuer confirms this
 identity meets requirement X"_ without publishing personal data on a public ledger — compliance
 **and** privacy.
 
-## V1 honesty note
+## Implementation Details
 
 The KYC provider is **simulated**: we deploy our own `ClaimIssuer` and sign test claims. A real
 deployment integrates a licensed KYC vendor as the trusted issuer. Everything else — the keys,

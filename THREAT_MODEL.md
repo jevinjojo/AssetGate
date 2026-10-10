@@ -32,7 +32,7 @@ Users must trust that owner/agent keys are held securely. Agent power is a **fea
 | Manipulate the cap table via the indexer           | idempotent (`unique(txHash,logIndex)`), resumable (`lastBlock`), reorg-safe (`confirmations` depth)              |
 | Front-run / grief with a reorg’d dividend snapshot | snapshots taken against confirmed blocks; root is immutable once posted                                          |
 
-## Known limitations (be honest about these)
+## Known limitations
 
 - **KYC is simulated.** We act as our own trusted issuer; no real identity verification occurs.
 - **Issuer key in the backend.** The Phase 10 KYC endpoint signs claims with the issuer key held in backend env — acceptable for a demo, **unacceptable for production** (use a KMS/HSM + a licensed KYC vendor).
