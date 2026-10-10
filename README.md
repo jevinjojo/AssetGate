@@ -15,7 +15,7 @@
 
 The full stack is deployed live on Sepolia testnet and cloud infrastructure. 
 
-- **Frontend Dashboard:** [Live on Vercel](https://assetgate.vercel.app)
+- **Frontend Dashboard:** https://asset-gate.vercel.app/
 - **Backend API & Indexer:** [Live on Render](https://assetgate.onrender.com/api/v1/health)
 - **Database:** Neon Serverless PostgreSQL
 - **Smart Contracts:** Deployed and verified on Sepolia (ERC-3643 Core + Identity Registry)
