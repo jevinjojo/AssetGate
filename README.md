@@ -95,7 +95,7 @@ https://github.com/user-attachments/assets/50fc73e8-3205-4b59-a8c4-f37f98c04eb0
 ### The Two-Gate Model
 
 ```mermaid
-flowchart LR
+flowchart TD
     Sender[Sender - Verified Investor] -->|Initiates Transfer| Gate1[Gate 1: Identity Registry]
     
     Gate1 -->|Is receiver verified?| Gate2[Gate 2: Modular Compliance]
