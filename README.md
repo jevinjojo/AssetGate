@@ -96,21 +96,15 @@ https://github.com/user-attachments/assets/50fc73e8-3205-4b59-a8c4-f37f98c04eb0
 
 ```mermaid
 flowchart LR
-    Sender([Verified Sender]) -->|Transfer| Gate1{"Gate 1:\nIdentity"}
+    Sender[Sender - Verified Investor] -->|Initiates Transfer| Gate1[Gate 1: Identity Registry]
     
-    Gate1 -->|Verified| Gate2{"Gate 2:\nCompliance"}
-    Gate1 -.->|Unverified| Revert((Revert))
+    Gate1 -->|Is receiver verified?| Gate2[Gate 2: Modular Compliance]
+    Gate1 -.->|No: Unverified| Revert[Transaction Reverts]
     
-    Gate2 -->|Rules Pass| Success((Success))
-    Gate2 -.->|Rule Violated| Revert
+    Gate2 -->|Do rules pass?| Success[Update Token Balances]
+    Gate2 -.->|No: Rule violated| Revert
     
-    Success --> Recipient([Target Wallet])
-    
-    classDef default fill:#f9f9f9,stroke:#333,stroke-width:1px;
-    classDef fail fill:#ffcccc,stroke:#cc0000;
-    classDef pass fill:#ccffcc,stroke:#00cc00;
-    class Revert fail;
-    class Success pass;
+    Success --> Recipient[Recipient - Target Address]
 ```
 
 ---
