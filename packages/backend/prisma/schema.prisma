@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql" // swap to "postgresql" + DATABASE_URL later, no code changes
+  provider = "postgresql"
 }
 
 model Token {

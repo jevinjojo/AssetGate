@@ -22,6 +22,38 @@ The full stack is deployed live on Sepolia testnet and cloud infrastructure.
 
 ---
 
+## 🎥 Live Demo (In Action)
+
+The full ERC-3643 pipeline in action — broken into 4 short clips to demonstrate institutional compliance.
+
+### 1️⃣ Identity Gating & On-Chain KYC
+A demonstration of the simulated KYC onboarding flow. The investor submits their country code on the frontend, and the Node.js backend securely signs an ERC-734 identity claim, submits it on-chain to their `ONCHAINID`, and instantly whitelists the investor on the Identity Registry.
+
+*[Insert Video 1 URL Here]*
+
+---
+
+### 2️⃣ The Two-Gate Transfer (Blocking Illegal Trades)
+This is the core of the ERC-3643 standard. The smart contract's `canTransfer` function acts as a pre-flight compliance check. We attempt to transfer tokens from a verified wallet to an **unverified** dummy address. The UI and the smart contract natively block the transaction, proving that non-compliant trades revert at the blockchain level.
+
+*[Insert Video 2 URL Here]*
+
+---
+
+### 3️⃣ Corporate Controls (Freezing & Forced Recovery)
+Regulated assets require absolute legal recourse. We use the Issuer Dashboard to execute a corporate freeze on a verified wallet, locking its assets. Then, acting as the issuer, we execute a **Forced Transfer** to recover the funds from the frozen wallet into the corporate treasury—bypassing standard ERC-20 rules while maintaining full compliance.
+
+*[Insert Video 3 URL Here]*
+
+---
+
+### 4️⃣ Merkle Dividends & The Investor Portal
+Demonstrating off-chain calculation with on-chain execution. The issuer creates a snapshot of the current cap table and calculates a Merkle Tree distribution for a USDC dividend. A verified investor then logs into the portal and successfully claims their allocation via a pull-payment Merkle proof.
+
+*[Insert Video 4 URL Here]*
+
+---
+
 ## 🔒 The Problem & The Solution
 
 ### The Problem
