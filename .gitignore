@@ -16,3 +16,8 @@ packages/backend/*.db-wal
 
 # keep testnet artifacts, ignore local/ephemeral ones
 packages/contracts/deployments/anvil.json
+
+# Private Tracking Files
+PLAN.md
+V2_BACKLOG.md
+packages/backend/prisma/assetgate.db
