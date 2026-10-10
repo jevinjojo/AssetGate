@@ -134,11 +134,16 @@ async function fetchAndHandle(address: `0x${string}`, event: any, from: bigint, 
   try {
     logs = await client.getLogs({ address, event, fromBlock: from, toBlock: to });
   } catch (e) {
-    log("warn", "getLogs failed (event may not exist in this version)", { event: (event as any).name, error: String(e) });
-    return;
+    log("error", "getLogs failed, throwing to prevent checkpoint advancement", { event: (event as any).name, error: String(e) });
+    throw e;
   }
   for (const l of logs) {
-    try { await handler(l); } catch (e) { log("error", "handler failed", { error: String(e) }); }
+    try { 
+      await handler(l); 
+    } catch (e) { 
+      log("error", "handler failed, throwing to prevent checkpoint advancement", { error: String(e) }); 
+      throw e; 
+    }
   }
 }
 
