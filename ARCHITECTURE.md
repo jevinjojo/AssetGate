@@ -9,13 +9,13 @@ moves balances. An ERC-3643 transfer first asks _"is this allowed?"_ and **rever
 On every `transfer` / `transferFrom` / `mint`, the token runs two checks:
 
 ```text
-        Alice (verified) --transfer--> Bob
+        Sender (verified) --transfer--> Recipient
                      |
                      v
         ┌─────────────────────────────┐
-   GATE 1: Identity Registry           │  Is Bob a verified investor?
-        │  - Is Bob registered?        │  (registered wallet + ONCHAINID
-        │  - Does his ONCHAINID hold   │   holding all required claims,
+   GATE 1: Identity Registry           │  Is the Recipient a verified investor?
+        │  - Is Recipient registered?  │  (registered wallet + ONCHAINID
+        │  - Does their ONCHAINID hold │   holding all required claims,
         │    all required claims,      │   signed by a trusted issuer)
         │    signed by a trusted issuer?│
         └─────────────────────────────┘
