@@ -20,4 +20,5 @@ packages/contracts/deployments/anvil.json
 # Private Tracking Files
 PLAN.md
 V2_BACKLOG.md
+DEMO.md
 packages/backend/prisma/assetgate.db
