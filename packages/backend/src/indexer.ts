@@ -129,10 +129,17 @@ async function handleCountryUpdated(l: any) {
 }
 
 // ---------- range processing ----------
-async function fetchAndHandle(address: `0x${string}`, event: any, from: bigint, to: bigint, handler: (l: any) => Promise<void>) {
+export async function fetchAndHandle(
+  address: `0x${string}`,
+  event: any,
+  from: bigint,
+  to: bigint,
+  handler: (l: any) => Promise<void>,
+  customClient: any = client
+) {
   let logs: any[] = [];
   try {
-    logs = await client.getLogs({ address, event, fromBlock: from, toBlock: to });
+    logs = await customClient.getLogs({ address, event, fromBlock: from, toBlock: to });
   } catch (e) {
     log("error", "getLogs failed, throwing to prevent checkpoint advancement", { event: (event as any).name, error: String(e) });
     throw e;
@@ -147,30 +154,30 @@ async function fetchAndHandle(address: `0x${string}`, event: any, from: bigint, 
   }
 }
 
-async function processRange(from: bigint, to: bigint) {
-  await fetchAndHandle(TOKEN, ev.transferEvent, from, to, handleTransfer);          // ordered => balances correct
-  await fetchAndHandle(TOKEN, ev.addressFrozenEvent, from, to, handleAddressFrozen);
-  await fetchAndHandle(TOKEN, ev.tokensFrozenEvent, from, to, handleTokensFrozen);
-  await fetchAndHandle(TOKEN, ev.tokensUnfrozenEvent, from, to, handleTokensUnfrozen);
-  await fetchAndHandle(TOKEN, ev.pausedEvent, from, to, handlePaused);
-  await fetchAndHandle(TOKEN, ev.unpausedEvent, from, to, handleUnpaused);
+export async function processRange(from: bigint, to: bigint, customClient: any = client) {
+  await fetchAndHandle(TOKEN, ev.transferEvent, from, to, handleTransfer, customClient);          // ordered => balances correct
+  await fetchAndHandle(TOKEN, ev.addressFrozenEvent, from, to, handleAddressFrozen, customClient);
+  await fetchAndHandle(TOKEN, ev.tokensFrozenEvent, from, to, handleTokensFrozen, customClient);
+  await fetchAndHandle(TOKEN, ev.tokensUnfrozenEvent, from, to, handleTokensUnfrozen, customClient);
+  await fetchAndHandle(TOKEN, ev.pausedEvent, from, to, handlePaused, customClient);
+  await fetchAndHandle(TOKEN, ev.unpausedEvent, from, to, handleUnpaused, customClient);
   if (config.identityRegistry) {
-    await fetchAndHandle(REGISTRY, ev.identityRegisteredEvent, from, to, handleIdentityRegistered);
-    await fetchAndHandle(REGISTRY, ev.identityRemovedEvent, from, to, handleIdentityRemoved);
-    await fetchAndHandle(REGISTRY, ev.countryUpdatedEvent, from, to, handleCountryUpdated);
+    await fetchAndHandle(REGISTRY, ev.identityRegisteredEvent, from, to, handleIdentityRegistered, customClient);
+    await fetchAndHandle(REGISTRY, ev.identityRemovedEvent, from, to, handleIdentityRemoved, customClient);
+    await fetchAndHandle(REGISTRY, ev.countryUpdatedEvent, from, to, handleCountryUpdated, customClient);
   }
 }
 
 // ---------- resumable, confirmation-aware loop ----------
-async function getLastBlock(): Promise<bigint | null> {
+export async function getLastBlock(): Promise<bigint | null> {
   const m = await prisma.meta.findUnique({ where: { key: "lastBlock" } });
   return m ? BigInt(m.value) : null;
 }
-async function setLastBlock(b: bigint) {
+export async function setLastBlock(b: bigint) {
   await prisma.meta.upsert({ where: { key: "lastBlock" }, create: { key: "lastBlock", value: b.toString() }, update: { value: b.toString() } });
 }
 
-async function ensureToken() {
+export async function ensureToken() {
   const [name, symbol, decimals] = await Promise.all([
     client.readContract({ address: TOKEN, abi: tokenReadAbi, functionName: "name" }),
     client.readContract({ address: TOKEN, abi: tokenReadAbi, functionName: "symbol" }),
@@ -184,15 +191,23 @@ async function ensureToken() {
   log("info", "token ensured", { token: TOKEN.toLowerCase(), name, symbol });
 }
 
-async function syncOnce() {
-  const latest = await client.getBlockNumber();
+export async function syncBatch(
+  fromBlock: bigint,
+  safeHead: bigint,
+  processFn: (from: bigint, to: bigint) => Promise<void> = (f, t) => processRange(f, t)
+) {
+  await processFn(fromBlock, safeHead);
+  await setLastBlock(safeHead);                                                          // 8.3 resumable
+  log("info", "synced", { from: fromBlock.toString(), to: safeHead.toString() });
+}
+
+export async function syncOnce(customClient: any = client) {
+  const latest = await customClient.getBlockNumber();
   const safeHead = latest > config.confirmations ? latest - config.confirmations : 0n; // 8.5 reorg-safety
   const last = await getLastBlock();
   const fromBlock = last === null ? config.startBlock : last + 1n;
   if (safeHead < fromBlock) return;
-  await processRange(fromBlock, safeHead);
-  await setLastBlock(safeHead);                                                          // 8.3 resumable
-  log("info", "synced", { from: fromBlock.toString(), to: safeHead.toString() });
+  await syncBatch(fromBlock, safeHead, (f, t) => processRange(f, t, customClient));
 }
 
 async function main() {
@@ -204,4 +219,10 @@ async function main() {
   log("info", "watching", { intervalMs: config.pollingIntervalMs });
 }
 
-main().catch((e) => { log("error", "fatal", { error: String(e) }); process.exit(1); });
+const isMain = process.argv[1] && (
+  process.argv[1].endsWith("indexer.ts") || process.argv[1].endsWith("indexer.js")
+);
+
+if (isMain && process.env.NODE_ENV !== "test") {
+  main().catch((e) => { log("error", "fatal", { error: String(e) }); process.exit(1); });
+}
