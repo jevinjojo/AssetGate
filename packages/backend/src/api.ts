@@ -7,12 +7,16 @@ import { prisma } from "./db";
 import { client } from "./chain";
 import { tokenReadAbi, registryReadAbi } from "./abi";
 
-import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
+import { readFileSync, existsSync } from "node:fs";
+import { resolve, dirname } from "node:path";
+import { fileURLToPath } from "node:url";
 import { keccak256, encodeAbiParameters, parseAbiParameters } from "viem";
 import { walletClient, account } from "./chain";
 import { registryWriteAbi, claimAbi, complianceReadAbi, moduleAbi } from "./abi";
 import { StandardMerkleTree } from "@openzeppelin/merkle-tree";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const TOPIC_KYC = 1n;
 const SCHEME_ECDSA = 1n;
@@ -20,7 +24,17 @@ const SCHEME_ECDSA = 1n;
 let _identityArtifact: { abi: any; bytecode: { object: `0x${string}` } } | null = null;
 function identityArtifact() {
   if (_identityArtifact) return _identityArtifact;
-  const p = resolve(process.cwd(), "../contracts/out/Identity.sol/Identity.json");
+  const candidates = [
+    resolve(__dirname, "./IdentityArtifact.json"),
+    resolve(process.cwd(), "src/IdentityArtifact.json"),
+    resolve(process.cwd(), "IdentityArtifact.json"),
+    resolve(process.cwd(), "packages/backend/src/IdentityArtifact.json"),
+    resolve(process.cwd(), "../contracts/out/Identity.sol/Identity.json"),
+  ];
+  const p = candidates.find((c) => existsSync(c));
+  if (!p) {
+    throw new Error(`Identity artifact not found in paths: ${candidates.join(", ")}`);
+  }
   _identityArtifact = JSON.parse(readFileSync(p, "utf8"));
   return _identityArtifact!;
 }

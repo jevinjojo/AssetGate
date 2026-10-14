@@ -207,7 +207,8 @@ export async function syncOnce(customClient: any = client) {
   const last = await getLastBlock();
   const fromBlock = last === null ? config.startBlock : last + 1n;
   if (safeHead < fromBlock) return;
-  await syncBatch(fromBlock, safeHead, (f, t) => processRange(f, t, customClient));
+  const toBlock = safeHead - fromBlock > config.batchSize ? fromBlock + config.batchSize : safeHead;
+  await syncBatch(fromBlock, toBlock, (f, t) => processRange(f, t, customClient));
 }
 
 async function main() {

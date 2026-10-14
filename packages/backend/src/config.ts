@@ -8,6 +8,7 @@ export const config = {
   startBlock: BigInt(process.env.START_BLOCK ?? "0"),
   confirmations: BigInt(process.env.CONFIRMATIONS ?? "0"),
   pollingIntervalMs: Number(process.env.POLLING_INTERVAL_MS ?? 2000),
+  batchSize: BigInt(process.env.BATCH_SIZE ?? "1000"),
   chainId: Number(process.env.CHAIN_ID ?? 31337), 
   // Phase 10: simulated KYC + preflight
   issuerPrivateKey: process.env.ISSUER_PRIVATE_KEY ?? "",
