@@ -1,4 +1,21 @@
-import "dotenv/config";
+import dotenv from "dotenv";
+import { resolve, dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+import { existsSync } from "node:fs";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const envPaths = [
+  resolve(__dirname, "../.env"),
+  resolve(process.cwd(), "packages/backend/.env"),
+  resolve(process.cwd(), ".env"),
+];
+for (const p of envPaths) {
+  if (existsSync(p)) {
+    dotenv.config({ path: p });
+    break;
+  }
+}
 
 export const config = {
   rpcUrl: process.env.RPC_URL ?? "http://127.0.0.1:8545",

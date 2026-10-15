@@ -1,5 +1,12 @@
 import { describe, it, beforeEach, after } from "node:test";
 import assert from "node:assert/strict";
+import { fileURLToPath } from "node:url";
+import { dirname, resolve } from "node:path";
+import dotenv from "dotenv";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+dotenv.config({ path: resolve(__dirname, "../.env") });
 
 // Set test environment so main() does not start the background polling loop
 process.env.NODE_ENV = "test";
