@@ -73,7 +73,7 @@ export default function App() {
         </div>
         <div className="footer-meta">
           <span className="mono muted">Status: All systems operational</span>
-          <span className="mono muted">Network: Sepolia Testnet</span>
+          <span className="mono muted">Network: {chainId === 677 ? "BOT Chain Mainnet (677)" : chainId === 11155111 ? "Sepolia Testnet" : `Chain ${chainId}`}</span>
         </div>
       </footer>
     </div>

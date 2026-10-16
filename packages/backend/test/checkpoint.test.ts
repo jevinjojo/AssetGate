@@ -1,4 +1,4 @@
-import { describe, it, beforeEach, after } from "node:test";
+import { describe, it, before, beforeEach, after } from "node:test";
 import assert from "node:assert/strict";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
@@ -23,9 +23,12 @@ describe("Indexer Checkpoint Resilience & Retry Tests", () => {
   const TEST_START_BLOCK = 1000n;
   let originalLastBlock: bigint | null = null;
 
-  beforeEach(async () => {
-    // Preserve existing database checkpoint state before each test
+  before(async () => {
+    // Preserve existing database checkpoint state once before test suite runs
     originalLastBlock = await getLastBlock();
+  });
+
+  beforeEach(async () => {
     await setLastBlock(TEST_START_BLOCK);
   });
 
