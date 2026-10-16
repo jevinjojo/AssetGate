@@ -86,6 +86,26 @@ async function main() {
 
   await app.register(cors, { origin: true });
 
+  app.get("/", async () => {
+    const meta = await prisma.meta.findUnique({ where: { key: "lastBlock" } });
+    let chainId = 0;
+    try { chainId = await client.getChainId(); } catch { /* rpc down */ }
+    return {
+      service: "AssetGate Compliance & Indexer API",
+      network: "BOT Chain Mainnet (Chain ID 677)",
+      status: "healthy",
+      token: TOKEN,
+      lastIndexedBlock: Number(meta?.value ?? "0"),
+      endpoints: {
+        health: "/api/v1/health",
+        capTable: "/api/v1/captable",
+        holders: "/api/v1/holders",
+        preflight: "/api/v1/transfer-preflight",
+        merkleProof: "/api/v1/dividends/merkle-proof",
+      },
+    };
+  });
+
   app.get("/api/v1/health", async () => {
     const meta = await prisma.meta.findUnique({ where: { key: "lastBlock" } });
     let chainId = 0;
