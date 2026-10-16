@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AssetGate — BOT Chain Mainnet Architecture & Integration Brief</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+    @page {
+      size: A4 portrait;
+      margin: 14mm 14mm 14mm 14mm;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.68;
+      color: #090d16;
+      background-color: #ffffff;
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 40px 24px;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    h1 {
+      font-size: 2.15rem;
+      font-weight: 700;
+      color: #000000;
+      border-bottom: 2px solid #cbd5e1;
+      padding-bottom: 12px;
+      margin-bottom: 24px;
+    }
+
+    h2 {
+      font-size: 1.45rem;
+      font-weight: 600;
+      color: #090d16;
+      margin-top: 36px;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 8px;
+    }
+
+    h3 {
+      font-size: 1.18rem;
+      font-weight: 600;
+      color: #0f172a;
+      margin-top: 24px;
+      margin-bottom: 12px;
+    }
+
+    p, li {
+      font-size: 1.05rem;
+      color: #090d16;
+      font-weight: 450;
+      line-height: 1.72;
+    }
+
+    li {
+      margin-bottom: 8px;
+    }
+
+    .meta-box {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 18px 24px;
+      margin-bottom: 30px;
+      font-size: 1rem;
+      color: #090d16;
+      line-height: 1.65;
+    }
+
+    .meta-box div {
+      margin-bottom: 6px;
+    }
+
+    .meta-box b {
+      color: #000000;
+      min-width: 220px;
+      display: inline-block;
+      font-weight: 600;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 0.98rem;
+      color: #090d16;
+    }
+
+    th, td {
+      border: 1px solid #cbd5e1;
+      padding: 10px 14px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f1f5f9;
+      font-weight: 600;
+      color: #000000;
+    }
+
+    td {
+      font-weight: 450;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f8fafc;
+    }
+
+    code, pre {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    code {
+      font-size: 0.92rem;
+      background: #f1f5f9;
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #000000;
+      font-weight: 500;
+    }
+
+    pre {
+      font-size: 0.86rem;
+      background: #0d2149;
+      color: #f0f7ff;
+      border: 1.5px solid #2563eb;
+      padding: 14px 18px;
+      border-radius: 8px;
+      overflow-x: auto;
+      line-height: 1.45;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.08);
+    }
+
+    .code-box {
+      background: #0d2149;
+      border: 1.5px solid #2563eb;
+      border-left: 4px solid #3b82f6;
+      color: #f0f7ff;
+      padding: 12px 16px;
+      border-radius: 6px;
+      margin: 12px 0;
+      font-size: 0.86rem;
+      line-height: 1.48;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 5px 12px;
+      background: #e0f2fe;
+      color: #0369a1;
+      font-size: 0.88rem;
+      font-weight: 600;
+      border-radius: 12px;
+      margin-bottom: 12px;
+    }
+
+    .alert {
+      background: #eff6ff;
+      border-left: 4px solid #2563eb;
+      padding: 14px 18px;
+      border-radius: 4px;
+      margin: 18px 0;
+      font-size: 1.02rem;
+      color: #0f172a;
+      line-height: 1.65;
+      font-weight: 450;
+    }
+
+    a {
+      color: #1d4ed8;
+      text-decoration: none;
+      word-break: break-all;
+      font-weight: 500;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    a code {
+      color: #1d4ed8;
+      background: #eff6ff;
+      border: 1px solid #dbeafe;
+      transition: all 0.15s ease;
+    }
+
+    a:hover code {
+      background: #dbeafe;
+      border-color: #bfdbfe;
+    }
+
+    .two-gate-diagram {
+      font-size: 0.81rem;
+      line-height: 1.36;
+      padding: 14px 18px;
+      margin: 14px 0;
+      background: #0d2149;
+      border: 1.5px solid #2563eb;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.10);
+      border-radius: 8px;
+      color: #f0f7ff;
+    }
+
+    .page-break {
+      page-break-before: always;
+      break-before: page;
+    }
+
+    .walkthrough-step {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-left: 4px solid #2563eb;
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+    }
+
+    .walkthrough-step h4 {
+      margin: 0 0 8px 0;
+      font-size: 1.06rem;
+      color: #000000;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+    }
+
+    .step-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      background: #2563eb;
+      color: #ffffff;
+      border-radius: 50%;
+      font-size: 0.80rem;
+      font-weight: 700;
+    }
+
+    .step-grid {
+      display: grid;
+      grid-template-columns: 145px 1fr;
+      row-gap: 6px;
+      column-gap: 12px;
+      font-size: 0.97rem;
+      margin-top: 6px;
+    }
+
+    .step-label {
+      font-weight: 600;
+      color: #334155;
+    }
+
+    .step-val {
+      color: #090d16;
+      font-weight: 450;
+    }
+
+    .expected-banner {
+      background: #f0fdf4;
+      border: 1px solid #86efac;
+      color: #14532d;
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 0.92rem;
+      margin-top: 6px;
+      display: inline-block;
+      font-weight: 600;
+    }
+
+    .expected-banner.warn {
+      background: #fef2f2;
+      border-color: #fca5a5;
+      color: #7f1d1d;
+    }
+
+    * {
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+
+    @media print {
+      body {
+        padding: 0;
+        max-width: 100%;
+        font-size: 10.2pt;
+        line-height: 1.54;
+        color: #000000 !important;
+      }
+      .no-print {
+        display: none;
+      }
+      h1 {
+        font-size: 1.95rem;
+        color: #000000 !important;
+      }
+      h2 {
+        font-size: 1.35rem;
+        color: #000000 !important;
+      }
+      h3 {
+        font-size: 1.12rem;
+        color: #000000 !important;
+      }
+      h4, b {
+        color: #000000 !important;
+      }
+      p, li {
+        font-size: 10.2pt;
+        line-height: 1.54;
+        color: #000000 !important;
+        font-weight: 480;
+      }
+      .meta-box, .alert {
+        font-size: 9.8pt;
+        line-height: 1.50;
+        padding: 12px 16px;
+        color: #000000 !important;
+        border-color: #94a3b8 !important;
+      }
+      table {
+        font-size: 9.2pt;
+        color: #000000 !important;
+      }
+      th, td {
+        padding: 6px 10px;
+        color: #000000 !important;
+        border-color: #94a3b8 !important;
+      }
+      pre {
+        font-size: 8.0pt !important;
+        line-height: 1.34 !important;
+        background-color: #0d2149 !important;
+        color: #f0f7ff !important;
+        border: 1px solid #2563eb !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      .code-box {
+        font-size: 8.2pt !important;
+        line-height: 1.36 !important;
+        padding: 8px 12px !important;
+        margin: 8px 0 !important;
+        background-color: #0d2149 !important;
+        color: #f0f7ff !important;
+        border: 1px solid #2563eb !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      .two-gate-diagram {
+        font-size: 8.0pt !important;
+        line-height: 1.32 !important;
+        padding: 12px 16px !important;
+        margin: 12px 0 !important;
+        background-color: #0d2149 !important;
+        color: #f0f7ff !important;
+        border: 1px solid #2563eb !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      code {
+        font-size: 9.0pt;
+        color: #000000 !important;
+      }
+      .walkthrough-step {
+        padding: 10px 14px;
+        margin-bottom: 12px;
+        border-left: 3.5px solid #2563eb;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+      .walkthrough-step h4 {
+        font-size: 9.8pt;
+        margin-bottom: 4px;
+        color: #000000 !important;
+      }
+      .step-grid {
+        grid-template-columns: 120px 1fr;
+        row-gap: 4px;
+        font-size: 9.0pt;
+      }
+      .step-val {
+        color: #000000 !important;
+        font-weight: 480;
+      }
+      .expected-banner {
+        font-size: 8.8pt;
+        padding: 4px 8px;
+      }
+      .page-break {
+        page-break-before: always !important;
+        break-before: page !important;
+      }
+      pre, table, .meta-box, .alert, tr {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+      .meta-box, th, tr:nth-child(even), .badge, .alert, .expected-banner {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="no-print" style="text-align: right; margin-bottom: 20px;">
+    <button onclick="window.print()" style="background: #2563eb; color: white; border: none; padding: 10px 18px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 0.95rem;">
+      🖨️ Print / Save as PDF
+    </button>
+  </div>
+
+  <div class="badge">BOT Chain Ecosystem Grant · Scheme C (Infrastructure & B2B Tooling)</div>
+  <h1>AssetGate — BOT Chain Mainnet Architecture & Integration Brief</h1>
+
+  <div class="meta-box">
+    <div><b>Project Name:</b> AssetGate</div>
+    <div><b>Standard:</b> ERC-3643 (T-REX Institutional Security Token) + ONCHAINID (ERC-734 / 735)</div>
+    <div><b>Target Network:</b> BOT Chain Mainnet (Chain ID <code>677</code>)</div>
+    <div><b>Mainnet RPC:</b> <code>https://rpc.botchain.ai</code></div>
+    <div><b>Block Explorer:</b> <a href="https://scan.botchain.ai" target="_blank">https://scan.botchain.ai ↗</a></div>
+    <div><b>Live DApp Dashboard:</b> <a href="https://asset-gate.vercel.app/" target="_blank">https://asset-gate.vercel.app/ ↗</a></div>
+    <div><b>Live Backend API (Health):</b> <a href="https://assetgate.onrender.com/api/v1/health" target="_blank">https://assetgate.onrender.com/api/v1/health ↗</a></div>
+    <div><b>Live Cap Table REST API:</b> <a href="https://assetgate.onrender.com/api/v1/captable" target="_blank">https://assetgate.onrender.com/api/v1/captable ↗</a></div>
+    <div><b>GitHub Repository:</b> <a href="https://github.com/jevinjojo/AssetGate" target="_blank">https://github.com/jevinjojo/AssetGate ↗</a></div>
+    <div><b>Orchestration Script:</b> <code>packages/contracts/script/DeployAll.s.sol</code></div>
+  </div>
+
+  <h2>1. Executive Summary & Value Proposition</h2>
+  <p>Real-World Assets (RWAs)—such as private credit funds, commercial real estate, structured debt, and treasuries—cannot be legally represented by standard ERC-20 tokens. Global regulatory frameworks require strict on-chain guarantees:</p>
+  <ul>
+    <li><b>Identity Verification:</b> Only KYC/AML-verified investors may hold or receive the asset.</li>
+    <li><b>Transfer Restrictions:</b> Asset movement must enforce jurisdictional rules, single-investor concentration caps, and max holder thresholds.</li>
+    <li><b>Institutional Governance:</b> Issuers require legal capabilities to freeze malicious wallets, pause trading during halts, execute court-ordered asset recovery, and distribute automated pro-rata dividends.</li>
+  </ul>
+  <p><b>AssetGate</b> brings institutional-grade RWA infrastructure to <b>BOT Chain</b>. Built on the battle-tested <b>ERC-3643 (T-REX)</b> standard, it establishes a turnkey B2B platform with on-chain compliance gates, resilient PostgreSQL event indexing, zero-gas preflight simulations, and specialized Issuer/Investor portals.</p>
+
+  <h2 class="page-break">2. Smart Contract Architecture (The Two-Gate Model)</h2>
+  <p>To meet global security token regulations, standard ERC-20 transfers are strictly forbidden. In AssetGate, every asset movement (<code>transfer</code>, <code>transferFrom</code>, <code>mint</code>) must pass through two independent, sequential on-chain verification gates before balances can update:</p>
+
+  <pre class="two-gate-diagram">
+       Sender (Verified) ────────── transfer(to, amount) ──────────► Recipient
+                                       │
+                                       ▼
+        ┌─────────────────────────────────────────────────────────────┐
+        │  GATE 1: Identity Registry (IdentityRegistry.sol)           │
+        │  • Is recipient registered in the Identity Registry?        │
+        │  • Does recipient hold a valid ONCHAINID contract?          │
+        │  • Does ONCHAINID hold a valid KYC Claim (Topic 1)          │
+        │    cryptographically signed by a Trusted Claim Issuer?      │
+        └──────────────────────────────┬──────────────────────────────┘
+                                       │
+                               [Passes Gate 1]
+                                       │
+                                       ▼
+        ┌─────────────────────────────────────────────────────────────┐
+        │  GATE 2: Modular Compliance (ModularCompliance.sol)         │
+        │  • Country Restriction: Is recipient's country allowed?     │
+        │  • Balance Cap: Does amount exceed single-wallet limit?     │
+        │  • Holder Threshold: Does transfer exceed max holder cap?   │
+        └──────────────────────────────┬──────────────────────────────┘
+                                       │
+                         ┌─────────────┴─────────────┐
+                         ▼                           ▼
+                 [Both Gates Pass]            [Either Fails]
+                         │                           │
+                   Tokens Move                 On-Chain Revert
+               Event Emitted & Indexed         Zero Balance Change
+  </pre>
+
+  <p><b>Core Architectural Guarantees:</b></p>
+  <ul>
+    <li><b>Gate 1 (Identity & Attestation):</b> Verifies investor eligibility via decentralized ONCHAINID (ERC-734/735). The token queries <code>IdentityRegistry.isVerified(recipient)</code>, confirming that an authorized claim issuer signed their KYC claim off-chain.</li>
+    <li><b>Gate 2 (Modular Compliance Rules):</b> Evaluates dynamic jurisdictional rules via <code>ModularCompliance.canTransfer()</code>. If the transfer breaches country restrictions, holding limits, or maximum investor caps, execution halts immediately.</li>
+    <li><b>Strict Atomicity:</b> If either gate returns false, the transaction reverts on-chain with zero state change. Only when both gates pass are balances debited/credited and indexed by our real-time engine.</li>
+  </ul>
+
+  <h2 class="page-break">3. Core Smart Contracts & Compliance Modules</h2>
+  <p>All smart contracts below have been compiled via Foundry, orchestrated with <code>DeployAll.s.sol</code>, and verified on BOT Chain Mainnet (Chain ID <code>677</code>):</p>
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 32%;">Contract</th>
+        <th style="width: 68%;">Architectural Responsibility</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><b>Token.sol (AGT)</b></td>
+        <td>Permissioned ERC-3643 asset token. Overrides transfers to enforce Gate 1 + 2 and holds administrative controls (mint, burn, freeze, pause, recovery).</td>
+      </tr>
+      <tr>
+        <td><b>IdentityRegistry.sol</b></td>
+        <td>On-chain registry mapping investor wallets to their ONCHAINID contract and country code. Answers <code>isVerified(address)</code>.</td>
+      </tr>
+      <tr>
+        <td><b>IdentityRegistryStorage.sol</b></td>
+        <td>Decoupled storage contract separating identity data from execution logic, allowing future logic upgrades without migrating investor state.</td>
+      </tr>
+      <tr>
+        <td><b>ModularCompliance.sol</b></td>
+        <td>Compliance rule engine. Binds active modules and dynamically verifies transfers via <code>canTransfer(from, to, amount)</code>.</td>
+      </tr>
+      <tr>
+        <td><b>ClaimTopicsRegistry.sol</b></td>
+        <td>Registry of mandatory verification topics. Configured for <code>Topic 1 = KYC</code>.</td>
+      </tr>
+      <tr>
+        <td><b>TrustedIssuersRegistry.sol</b></td>
+        <td>Whitelist of authorized identity attestation providers, preventing forged or self-signed claims.</td>
+      </tr>
+      <tr>
+        <td><b>ClaimIssuer.sol</b></td>
+        <td>Trusted ONCHAINID claim signer contract holding authorized ECDSA public keys for KYC attestations.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Active Compliance Modules:</h3>
+  <ul>
+    <li><b><code>CountryRestrictModule.sol</code>:</b> Enforces investor jurisdiction eligibility (e.g., permitting ISO 840 US investors while blocking sanctioned nations).</li>
+    <li><b><code>BalanceCapModule.sol</code>:</b> Prevents token concentration by capping maximum holdings per single investor.</li>
+    <li><b><code>MaxHolderCountModule.sol</code>:</b> Automatically enforces private placement limits (e.g. maximum 500 holders).</li>
+  </ul>
+
+  <h2>4. ONCHAINID Privacy & Cryptographic Attestation</h2>
+  <p>We designed the identity layer to guarantee institutional compliance without exposing sensitive investor data on a public ledger:</p>
+  <ul>
+    <li><b>Decoupled Identity Contracts:</b> Every investor has a dedicated ONCHAINID smart contract (ERC-734 / ERC-735), separating their on-chain legal persona from their transient wallet keys.</li>
+    <li><b>Zero PII On-Chain:</b> Passports, tax IDs, and personal documents never touch BOT Chain. The blockchain records only cryptographic attestations.</li>
+    <li><b>ECDSA Claim Signatures:</b> Our trusted Claim Issuer signs an off-chain attestation hash: <code>keccak256(identityAddress, TOPIC_KYC, "PASSED_KYC")</code>. The smart contract validates only this signature, keeping verification instantaneous and gas-minimal.</li>
+  </ul>
+
+  <h2>5. Resilient Indexing Engine & Database Fault-Tolerance</h2>
+  <p>AssetGate maintains a live, zero-latency Cap Table backed by Fastify, Prisma ORM, and Neon PostgreSQL without overloading BOT Chain's RPC nodes:</p>
+  <ul>
+    <li><b>Conservative 100-Block Batches:</b> Configured with <code>BATCH_SIZE = 100</code> against <code>https://rpc.botchain.ai</code> as recommended by the BOT Chain engineering team, eliminating RPC timeouts.</li>
+    <li><b>Atomic ACID Checkpoints:</b> Checkpoint updates (<code>lastBlock</code>) are committed inside <code>prisma.$transaction</code> alongside event inserts.</li>
+    <li><b>Automated Fault-Tolerance Tests:</b> Verification tests prove that RPC failures or database deadlocks immediately roll back and leave <code>lastBlock</code> strictly unchanged. On restart, the indexer resumes from <code>lastBlock + 1</code> with zero duplicate records (enforced by <code>txHash_logIndex</code> unique keys).</li>
+  </ul>
+
+  <h2>6. Off-Chain Preflight Simulation Shield</h2>
+  <p>On public blockchains, compliance failures revert on-chain and burn real gas fees. AssetGate eliminates this friction with its <b>Preflight Shield (<code>/api/v1/transfer-preflight</code>)</b>:</p>
+  <div class="alert">
+    Before MetaMask is prompted, our backend runs an off-chain compliance simulation in under 15ms. If the recipient is unverified or exceeds a compliance cap, the UI immediately displays <b>⛔ The recipient is not a verified investor</b> and halts execution, saving 100% of failed gas fees.
+  </div>
+
+  <h2 class="page-break">7. Complete Live Demo Walkthrough</h2>
+  <p>The production DApp is deployed live at <a href="https://asset-gate.vercel.app/" target="_blank"><b>https://asset-gate.vercel.app/</b></a> on <b>BOT Chain Mainnet (Chain ID <code>677</code>)</b>. The platform operates seamlessly across two standard user personas:</p>
+
+  <div class="alert" style="margin-top: 12px; margin-bottom: 20px;">
+    <b>Network Parameters:</b> BOT Chain Mainnet · Chain ID: <code>677</code> · RPC: <code>https://rpc.botchain.ai</code> · Currency: <code>BOT</code> · Standard Transfer Gas: ~0.003 BOT.
+  </div>
+
+  <h3>Persona A: Investor Portal (Self-Sovereign Identity & Compliant Trading)</h3>
+
+  <div class="walkthrough-step">
+    <h4><span class="step-badge">1</span> Connect Wallet & Chain Verification</h4>
+    <div class="step-grid">
+      <div class="step-label">Action:</div>
+      <div class="step-val">Open <a href="https://asset-gate.vercel.app/" target="_blank">https://asset-gate.vercel.app/</a>. Click <b>Connect Wallet</b>. Ensure top-right toggle is set to <b>Investor</b>.</div>
+      <div class="step-label">Under the Hood:</div>
+      <div class="step-val">Wagmi connector detects chain ID. If on another network, prompts MetaMask to switch to BOT Chain (677).</div>
+      <div class="step-label">Expected Screen:</div>
+      <div class="step-val"><span class="expected-banner">Navbar displays your truncated address (e.g. <code>0x4aE8…8114</code>) and active connection status</span></div>
+    </div>
+  </div>
+
+  <div class="walkthrough-step">
+    <h4><span class="step-badge">2</span> Unverified Initial State</h4>
+    <div class="step-grid">
+      <div class="step-label">Action:</div>
+      <div class="step-val">Inspect the <b>Verification</b> and <b>Transfer</b> panels before performing KYC.</div>
+      <div class="step-label">Expected Screen:</div>
+      <div class="step-val">
+        <span class="expected-banner warn">⚠️ "You are not verified yet. Complete simulated KYC to become eligible."</span><br>
+        <span class="expected-banner warn">Transfer panel shows: "Complete KYC first to transfer" (Send button disabled)</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="walkthrough-step">
+    <h4><span class="step-badge">3</span> 1-Click KYC Onboarding (Decentralized Identity Creation)</h4>
+    <div class="step-grid">
+      <div class="step-label">Action:</div>
+      <div class="step-val">Leave country input as <code>840</code> (United States ISO numeric) and click <b>Complete KYC</b>.</div>
+      <div class="step-label">Under the Hood:</div>
+      <div class="step-val">Backend Fastify service: (1) deploys an ERC-734/735 ONCHAINID contract, (2) signs an ECDSA claim for Topic 1 via ClaimIssuer, and (3) registers the investor in <code>IdentityRegistry.sol</code>.</div>
+      <div class="step-label">Expected Screen:</div>
+      <div class="step-val">
+        <span class="expected-banner">✓ Verified investor · Required claim — KYC: held · Country: 840 · ONCHAINID: 0x… ↗</span><br>
+        The Transfer panel instantly unlocks and becomes interactive.
+      </div>
+    </div>
+  </div>
+
+  <div class="walkthrough-step">
+    <h4><span class="step-badge">4</span> Portfolio Inspection & Balance Verification</h4>
+    <div class="step-grid">
+      <div class="step-label">Action:</div>
+      <div class="step-val">View the <b>Holdings</b> panel.</div>
+      <div class="step-label">Expected Screen:</div>
+      <div class="step-val">
+        <span class="expected-banner">AssetGate RWA Token (AGT) · Balance: 100.0 AGT · Frozen tokens: 0.0 · Wallet frozen: no</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="walkthrough-step">
+    <h4><span class="step-badge">5</span> Preflight Shield & Compliant Transfer Testing</h4>
+    <div class="step-grid">
+      <div class="step-label">Test 5A (Negative):</div>
+      <div class="step-val">Enter an unverified recipient (e.g. <code>0x000000000000000000000000000000000000dEaD</code>), amount <code>5</code>, and click <b>Send</b>.</div>
+      <div class="step-label">Expected Result:</div>
+      <div class="step-val">
+        <span class="expected-banner warn">⛔ "Recipient is not verified in IdentityRegistry"</span><br>
+        <b>Zero Gas Burned:</b> Preflight Shield intercepts the call off-chain in 15ms. MetaMask is never triggered.
+      </div>
+      <div class="step-label">Test 5B (Positive):</div>
+      <div class="step-val">Enter a verified recipient (e.g. Issuer <code>0x97C8110ed08cc87207f72d71FaBF8B9E98844658</code>), amount <code>1</code>, and click <b>Send</b>.</div>
+      <div class="step-label">Expected Result:</div>
+      <div class="step-val">
+        <span class="expected-banner">✓ Confirmed [Receipt: 0x… ↗]</span><br>
+        MetaMask confirms the transfer. The confirmation toast provides a clickable link to BOT Chain Explorer.
+      </div>
+    </div>
+  </div>
+
+  <div class="walkthrough-step">
+    <h4><span class="step-badge">6</span> Merkle Dividend Claiming</h4>
+    <div class="step-grid">
+      <div class="step-label">Action:</div>
+      <div class="step-val">Scroll to <b>Claim dividend</b>. Enter Distribution ID <code>1</code> (Funded with 50 mUSDC) and click <b>Claim</b>.</div>
+      <div class="step-label">Under the Hood:</div>
+      <div class="step-val">Queries <code>/api/v1/dividends/merkle-proof</code>. Fastify computes your Merkle tree proof against the on-chain root and executes <code>DividendDistributor.claim()</code>.</div>
+      <div class="step-label">Expected Screen:</div>
+      <div class="step-val">
+        <span class="expected-banner">✓ Confirmed [Receipt: 0x860acf…a55f03 ↗]</span><br>
+        Exact pro-rata share of MockUSDC is transferred directly to your wallet on BOT Chain.
+      </div>
+    </div>
+  </div>
+
+  <h3 style="margin-top: 30px;">Persona B: Issuer / Fund Manager Portal (Corporate Governance & Control)</h3>
+
+  <div class="walkthrough-step">
+    <h4><span class="step-badge">1</span> Real-Time Cap Table Inspection</h4>
+    <div class="step-grid">
+      <div class="step-label">Action:</div>
+      <div class="step-val">Toggle top-right switch to <b>Issuer</b>. Review the <b>Live Cap Table</b>.</div>
+      <div class="step-label">Expected Screen:</div>
+      <div class="step-val">
+        <span class="expected-banner">Total Supply: 1,000 AGT · Active Holders: 2 · Auto-refreshes every 3s via Neon PostgreSQL indexer</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="walkthrough-step">
+    <h4><span class="step-badge">2</span> Agent Role Delegation (Interactive Permission Manager)</h4>
+    <div class="step-grid">
+      <div class="step-label">Action:</div>
+      <div class="step-val">In <b>Agent roles (Admin)</b>, paste an operator or reviewer wallet address and click <b>Grant Agent</b>.</div>
+      <div class="step-label">Under the Hood:</div>
+      <div class="step-val">Calls <code>Token.addAgent(operatorAddress)</code>. Grants administrative permissions to mint, freeze, and manage compliance.</div>
+      <div class="step-label">Expected Screen:</div>
+      <div class="step-val">
+        <span class="expected-banner">✓ Confirmed [Receipt: 0x… ↗]</span> — Authorized operator can now execute all governance controls below.
+      </div>
+    </div>
+  </div>
+
+  <div class="walkthrough-step">
+    <h4><span class="step-badge">3</span> Investor Eligibility & Identity Lookup</h4>
+    <div class="step-grid">
+      <div class="step-label">Action:</div>
+      <div class="step-val">In <b>Check eligibility</b>, enter investor wallet <code>0x4aE806D2331854Ba4aEc184645d3B8E57F5C8114</code> and click <b>Look up</b>.</div>
+      <div class="step-label">Expected Screen:</div>
+      <div class="step-val">
+        <span class="expected-banner">Verified: yes · Frozen: no · Country: 840 · ONCHAINID: 0x78E175a0…7803</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="walkthrough-step">
+    <h4><span class="step-badge">4</span> Compliant Asset Minting</h4>
+    <div class="step-grid">
+      <div class="step-label">Action:</div>
+      <div class="step-val">In <b>Mint</b>, enter a verified investor address, amount <code>50</code>, and click <b>Mint</b>.</div>
+      <div class="step-label">Expected Screen:</div>
+      <div class="step-val">
+        <span class="expected-banner">✓ Confirmed [Receipt: 0x… ↗]</span> — Live Cap Table immediately updates total supply and balances.
+      </div>
+    </div>
+  </div>
+
+  <div class="walkthrough-step">
+    <h4><span class="step-badge">5</span> Partial Escrow Freezing (Regulatory Lockup)</h4>
+    <div class="step-grid">
+      <div class="step-label">Action:</div>
+      <div class="step-val">In <b>Freeze partial tokens</b>, enter the investor wallet, amount <code>20</code>, and click <b>Freeze partial</b>.</div>
+      <div class="step-label">Expected Screen:</div>
+      <div class="step-val">
+        <span class="expected-banner">✓ Confirmed [Receipt: 0x… ↗]</span> — Locks 20 AGT in escrow; remaining 80 AGT stays fully liquid.
+      </div>
+    </div>
+  </div>
+
+  <div class="walkthrough-step">
+    <h4><span class="step-badge">6</span> Full Wallet Freeze / Unfreeze</h4>
+    <div class="step-grid">
+      <div class="step-label">Action:</div>
+      <div class="step-val">In <b>Freeze / unfreeze address</b>, enter a wallet address and click <b>Freeze</b>.</div>
+      <div class="step-label">Expected Screen:</div>
+      <div class="step-val">
+        <span class="expected-banner">✓ Confirmed [Receipt: 0x… ↗]</span> — Halts all inbound/outbound asset transfers at Gate 2. Click <b>Unfreeze</b> to restore.
+      </div>
+    </div>
+  </div>
+
+  <div class="walkthrough-step">
+    <h4><span class="step-badge">7</span> Forced Recovery Clawback (Legal Asset Recovery)</h4>
+    <div class="step-grid">
+      <div class="step-label">Action:</div>
+      <div class="step-val">In <b>Forced transfer (recovery)</b>, enter lost wallet in <code>From</code>, verified wallet in <code>To</code>, and amount. Click <b>Force transfer</b>.</div>
+      <div class="step-label">Expected Screen:</div>
+      <div class="step-val">
+        <span class="expected-banner">✓ Confirmed [Receipt: 0x… ↗]</span> — Reclaims tokens under legal authority without requiring lost key signature.
+      </div>
+    </div>
+  </div>
+
+  <div class="walkthrough-step">
+    <h4><span class="step-badge">8</span> Global Circuit Breaker (Emergency Pause)</h4>
+    <div class="step-grid">
+      <div class="step-label">Action:</div>
+      <div class="step-val">In <b>Pause / unpause</b>, click <b>Pause</b> to halt all network trading. Click <b>Unpause</b> to resume.</div>
+      <div class="step-label">Expected Screen:</div>
+      <div class="step-val">
+        <span class="expected-banner">✓ Confirmed [Receipt: 0x… ↗]</span> — Emits <code>Paused()</code>; all token transfers immediately revert on-chain.
+      </div>
+    </div>
+  </div>
+
+  <div class="walkthrough-step">
+    <h4><span class="step-badge">9</span> 3-Step Automated Dividend Distribution</h4>
+    <div class="step-grid">
+      <div class="step-label">1 · Prepare:</div>
+      <div class="step-val">Enter <code>50</code> in <code>Total payout (mUSDC)</code>. Click <b>1 · Prepare (snapshot cap table)</b>. Shows: <code>Recipients: 2, root: 0xf025…</code></div>
+      <div class="step-label">2 · Approve:</div>
+      <div class="step-val">Click <b>2 · Approve mUSDC</b>. Confirms allowance for the Distributor contract. Displays <span class="expected-banner">✓ Confirmed [Receipt: 0xa818… ↗]</span></div>
+      <div class="step-label">3 · Create:</div>
+      <div class="step-val">Click <b>3 · Create distribution</b>. Submits the root and funds on-chain. Displays <span class="expected-banner">✓ Confirmed [Receipt: 0xe026… ↗]</span>. Unlocks instant claims!</div>
+    </div>
+  </div>
+
+  <h2>8. Role-Based Access Control & Dashboard Agent Manager</h2>
+  <p>To ensure high institutional security while making corporate administration frictionless, AssetGate combines strict smart contract RBAC with an interactive dashboard permission manager:</p>
+  <ul>
+    <li><b>On-Chain Security:</b> Administrative controls (<code>mint</code>, <code>freeze</code>, <code>forcedTransfer</code>, <code>pause</code>) strictly require the <code>AGENT_ROLE</code> on both the Token and Identity Registry contracts. Unauthorized calls revert immediately.</li>
+    <li><b>Interactive UI Agent Manager:</b> Contract owners and compliance officers can delegate or revoke the Agent role directly through the governance interface without executing manual command-line scripts:
+      <pre class="code-box"><span style="color: #93c5fd;">// Operator permissions can be granted or revoked directly from the web UI:</span>
+<span style="color: #ffffff; font-weight: 600;">token</span>.<span style="color: #60a5fa;">addAgent</span>(operatorAddress);
+<span style="color: #ffffff; font-weight: 600;">identityRegistry</span>.<span style="color: #60a5fa;">addAgent</span>(operatorAddress);</pre>
+      Simply input the target operator's wallet address, click <b>Grant agent</b>, and that account is immediately authorized on-chain to execute minting, compliance freezes, and emergency halts.</li>
+    <li><b>Instant Transaction Proofs:</b> Confirmation banners on all dashboard controls render live receipt links directly to BOT Chain Explorer, allowing compliance officers and auditors to verify the underlying state change on-chain in real time.</li>
+  </ul>
+
+  <h2 class="page-break">9. BOT Chain Mainnet Deployment Matrix & Verification</h2>
+  <p>The entire AssetGate protocol suite is deployed and live on <b>BOT Chain Mainnet (Chain ID <code>677</code>)</b>. All smart contracts are open for public audit and verification on <a href="https://scan.botchain.ai" target="_blank">scan.botchain.ai</a>:</p>
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 34%;">Contract Name</th>
+        <th style="width: 66%;">Verified Mainnet Address (Chain 677)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td><b>Token (AGT)</b></td><td><a href="https://scan.botchain.ai/token/0x130ae863F28E1D990a975F700F536DDFc793dcf2" target="_blank"><code>0x130ae863F28E1D990a975F700F536DDFc793dcf2</code> ↗</a></td></tr>
+      <tr><td><b>IdentityRegistry</b></td><td><a href="https://scan.botchain.ai/address/0x99C4Aca6Bd389458A27a299Ef5Ccea34905c9d69" target="_blank"><code>0x99C4Aca6Bd389458A27a299Ef5Ccea34905c9d69</code> ↗</a></td></tr>
+      <tr><td><b>IdentityRegistryStorage</b></td><td><a href="https://scan.botchain.ai/address/0x94d483cF70988b2651beC420Ae1dE27b2627E287" target="_blank"><code>0x94d483cF70988b2651beC420Ae1dE27b2627E287</code> ↗</a></td></tr>
+      <tr><td><b>ModularCompliance</b></td><td><a href="https://scan.botchain.ai/address/0x8725ECe13cFfa069Aaae7A30d3b1e742F830c14E" target="_blank"><code>0x8725ECe13cFfa069Aaae7A30d3b1e742F830c14E</code> ↗</a></td></tr>
+      <tr><td><b>ClaimTopicsRegistry</b></td><td><a href="https://scan.botchain.ai/address/0x351b9E14C42848E6f41E06b09d755A242a4B8Ed0" target="_blank"><code>0x351b9E14C42848E6f41E06b09d755A242a4B8Ed0</code> ↗</a></td></tr>
+      <tr><td><b>TrustedIssuersRegistry</b></td><td><a href="https://scan.botchain.ai/address/0x64600121a9f8e33Cd0cE21ff57C7Bc8B59515b70" target="_blank"><code>0x64600121a9f8e33Cd0cE21ff57C7Bc8B59515b70</code> ↗</a></td></tr>
+      <tr><td><b>ClaimIssuer</b></td><td><a href="https://scan.botchain.ai/address/0xa7a76b528e6E740a8AE0B036FCAaE8Be0b233ad1" target="_blank"><code>0xa7a76b528e6E740a8AE0B036FCAaE8Be0b233ad1</code> ↗</a></td></tr>
+      <tr><td><b>CountryRestrictModule</b></td><td><a href="https://scan.botchain.ai/address/0xCa5957CD989088b6F4d51BD8AC5199c2188b9515" target="_blank"><code>0xCa5957CD989088b6F4d51BD8AC5199c2188b9515</code> ↗</a></td></tr>
+      <tr><td><b>BalanceCapModule</b></td><td><a href="https://scan.botchain.ai/address/0xefc25232Cde06B57C3ee38C15c82554FB2396d0b" target="_blank"><code>0xefc25232Cde06B57C3ee38C15c82554FB2396d0b</code> ↗</a></td></tr>
+      <tr><td><b>MaxHolderCountModule</b></td><td><a href="https://scan.botchain.ai/address/0x7E52c782f510274F76b83DB4d925d94486e6E6bC" target="_blank"><code>0x7E52c782f510274F76b83DB4d925d94486e6E6bC</code> ↗</a></td></tr>
+      <tr><td><b>MockUSDC (Dividend Payout Token)</b></td><td><a href="https://scan.botchain.ai/address/0x16F7975FEba6F69b52D896858581d75010446E4E" target="_blank"><code>0x16F7975FEba6F69b52D896858581d75010446E4E</code> ↗</a></td></tr>
+      <tr><td><b>DividendDistributor (Merkle Payouts)</b></td><td><a href="https://scan.botchain.ai/address/0x50D17b36F8d0D28D343fFF298bd4958CFEFEEDC1" target="_blank"><code>0x50D17b36F8d0D28D343fFF298bd4958CFEFEEDC1</code> ↗</a></td></tr>
+    </tbody>
+  </table>
+
+  <h3>Core Genesis Verification & Live Endpoints</h3>
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 34%;">Component / Genesis Proof</th>
+        <th style="width: 66%;">Verified Endpoint / Transaction Reference</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><b>Live DApp Dashboard</b></td>
+        <td><a href="https://asset-gate.vercel.app/" target="_blank"><code>https://asset-gate.vercel.app/</code> ↗</a></td>
+      </tr>
+      <tr>
+        <td><b>Live Indexer & Backend Health API</b></td>
+        <td><a href="https://assetgate.onrender.com/api/v1/health" target="_blank"><code>https://assetgate.onrender.com/api/v1/health</code> ↗</a></td>
+      </tr>
+      <tr>
+        <td><b>Live Cap Table REST API</b></td>
+        <td><a href="https://assetgate.onrender.com/api/v1/captable" target="_blank"><code>https://assetgate.onrender.com/api/v1/captable</code> ↗</a></td>
+      </tr>
+      <tr>
+        <td><b>Token Genesis Deployment Tx</b></td>
+        <td><a href="https://scan.botchain.ai/tx/0xc449747a8a1b34196d303891f494a57792f7ada4b1fda7835d42b8e7e2bf8215" target="_blank"><code>0xc449747a8a1b34196d303891f494a57792f7ada4b1fda7835d42b8e7e2bf8215</code> ↗</a></td>
+      </tr>
+      <tr>
+        <td><b>Genesis Bootstrap Mint (1,000 AGT)</b></td>
+        <td><a href="https://scan.botchain.ai/tx/0x89528152678240c9cf2f1d67f8f065c47473cc0f7c15fb26907b7d1f4fa4a1ca" target="_blank"><code>0x89528152678240c9cf2f1d67f8f065c47473cc0f7c15fb26907b7d1f4fa4a1ca</code> ↗</a></td>
+      </tr>
+      <tr>
+        <td><b>Reference Investor ONCHAINID</b></td>
+        <td><a href="https://scan.botchain.ai/address/0x78E175a0005AA5D386BF9c01c9b91A79472B7803" target="_blank"><code>0x78E175a0005AA5D386BF9c01c9b91A79472B7803</code> ↗</a></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="alert" style="margin-top: 24px;">
+    <b>Real-Time On-Chain Verifiability:</b> All subsequent protocol activity—including two-gate compliant transfers, full address freezes, partial regulatory escrows, forced recovery clawbacks, Merkle dividend creation, and investor claims—emits standard ERC-3643 events indexed by our Neon PostgreSQL service and is verifiable in real time directly on the <a href="https://scan.botchain.ai/token/0x130ae863F28E1D990a975F700F536DDFc793dcf2" target="_blank"><b>AGT Token Explorer Page ↗</b></a>.
+  </div>
+
+</body>
+</html>
