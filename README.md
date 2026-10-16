@@ -7,18 +7,22 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue?logo=typescript)](https://www.typescriptlang.org/)
 [![Foundry](https://img.shields.io/badge/Foundry-Compatible-orange)](https://book.getfoundry.sh/)
 [![CI](https://github.com/jevinjojo/AssetGate/actions/workflows/ci.yml/badge.svg)](https://github.com/jevinjojo/AssetGate/actions)
-[![Status](https://img.shields.io/badge/status-live-brightgreen)](https://assetgate.vercel.app/)
+[![Network](https://img.shields.io/badge/Network-BOT%20Chain%20Mainnet%20(677)-0052FF)](https://scan.botchain.ai/token/0x130ae863F28E1D990a975F700F536DDFc793dcf2)
+[![Status](https://img.shields.io/badge/status-live-brightgreen)](https://asset-gate.vercel.app/)
 
 ---
 
 ## 🚀 Live Demo & Infrastructure
 
-The full stack is deployed live on Sepolia testnet and cloud infrastructure. 
+The complete AssetGate protocol is deployed live on **BOT Chain Mainnet (Chain ID 677)** and production cloud infrastructure. 
 
-- **Frontend Dashboard:** https://asset-gate.vercel.app/
+- **Frontend Dashboard:** [https://asset-gate.vercel.app/](https://asset-gate.vercel.app/)
+- **Architecture & Integration Brief:** [https://asset-gate.vercel.app/brief.html](https://asset-gate.vercel.app/brief.html)
+- **AGT Token on BOT Chain Explorer:** [`0x130ae863F28E1D990a975F700F536DDFc793dcf2`](https://scan.botchain.ai/token/0x130ae863F28E1D990a975F700F536DDFc793dcf2)
+- **Target Network:** BOT Chain Mainnet (`Chain ID: 677`, `RPC: https://rpc.botchain.ai`)
 - **Backend API & Indexer:** [Live on Render](https://assetgate.onrender.com/api/v1/health)
 - **Database:** Neon Serverless PostgreSQL
-- **Smart Contracts:** Deployed and verified on Sepolia (ERC-3643 Core + Identity Registry)
+- **Smart Contracts:** Deployed and verified on BOT Chain Mainnet (ERC-3643 Core, ONCHAINID, Modular Compliance, Merkle Dividend Distributor)
 
 ---
 
@@ -82,6 +86,8 @@ https://github.com/user-attachments/assets/50fc73e8-3205-4b59-a8c4-f37f98c04eb0
 | 🛂 **Identity Gating** | Enforces KYC/eligibility natively via `ONCHAINID` (ERC-734/735) signed claims. Unverified wallets cannot receive tokens. |
 | 🧩 **Modular Compliance** | Custom Solidity rule modules (`MaxHolderCountModule`, `BalanceCapModule`, `CountryRestrictModule`) executed atomically on every transfer. |
 | 🛑 **Corporate Controls** | Built-in issuer controls required by regulators: freeze, partial freeze, pause, burn, and force-transfer recovery. |
+| 🛡️ **Preflight Shield** | Off-chain simulation endpoint (`/api/v1/transfer-preflight`) executing identity & compliance rules in <15ms to save 100% of failed gas fees before invoking MetaMask. |
+| 💰 **Merkle Dividends** | Automated 3-step snapshot & Merkle tree payout engine for instant, pro-rata USDC distributions. |
 | 📡 **Live Event Indexer** | Viem-powered Node.js indexer that listens to ERC-3643 contract events, maps them to a relational schema, and stores them in PostgreSQL. |
 | 📊 **Issuer Dashboard** | A highly polished React/Vite dashboard for issuers to manage cap tables, mint tokens, and execute corporate actions. |
 | 🏛️ **Investor Portal** | A dedicated view for verified investors to view their eligible holdings and identity status. |
@@ -114,7 +120,7 @@ flowchart TD
 ### Prerequisites
 - Node.js 20+
 - Foundry (`forge`, `anvil`)
-- A Sepolia RPC endpoint (Alchemy / Infura)
+- BOT Chain Mainnet RPC (`https://rpc.botchain.ai`) or local Anvil
 - Neon PostgreSQL database
 
 ### 1. Contracts & Local Chain
@@ -175,6 +181,8 @@ AssetGate/
 │   │   │   └── db.ts            # Prisma client instance
 │   │   └── package.json
 │   └── frontend/
+│       ├── public/
+│       │   └── brief.html       # Standalone Architecture & Integration Brief
 │       ├── src/
 │       │   ├── components/      # React: CapTable, IssuerControls, InvestorPortal
 │       │   ├── App.tsx          # Main dashboard entrypoint
