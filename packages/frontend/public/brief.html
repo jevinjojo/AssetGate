@@ -410,12 +410,6 @@
 </head>
 <body>
 
-  <div class="no-print" style="text-align: right; margin-bottom: 20px;">
-    <button onclick="window.print()" style="background: #2563eb; color: white; border: none; padding: 10px 18px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 0.95rem;">
-      🖨️ Print / Save as PDF
-    </button>
-  </div>
-
   <div class="badge">BOT Chain Ecosystem Grant · Scheme C (Infrastructure & B2B Tooling)</div>
   <h1>AssetGate — BOT Chain Mainnet Architecture & Integration Brief</h1>
 
@@ -424,15 +418,12 @@
     <div><b>Standard:</b> ERC-3643 (T-REX Institutional Security Token) + ONCHAINID (ERC-734 / 735)</div>
     <div><b>Target Network:</b> BOT Chain Mainnet (Chain ID <code>677</code>)</div>
     <div><b>Mainnet RPC:</b> <code>https://rpc.botchain.ai</code></div>
-    <div><b>Block Explorer:</b> <a href="https://scan.botchain.ai" target="_blank">https://scan.botchain.ai ↗</a></div>
     <div><b>Live DApp Dashboard:</b> <a href="https://asset-gate.vercel.app/" target="_blank">https://asset-gate.vercel.app/ ↗</a></div>
-    <div><b>Live Backend API (Health):</b> <a href="https://assetgate.onrender.com/api/v1/health" target="_blank">https://assetgate.onrender.com/api/v1/health ↗</a></div>
-    <div><b>Live Cap Table REST API:</b> <a href="https://assetgate.onrender.com/api/v1/captable" target="_blank">https://assetgate.onrender.com/api/v1/captable ↗</a></div>
+    <div><b>AGT Token on Explorer:</b> <a href="https://scan.botchain.ai/token/0x130ae863F28E1D990a975F700F536DDFc793dcf2" target="_blank"><code>https://scan.botchain.ai/token/0x130ae863F28E1D990a975F700F536DDFc793dcf2</code> ↗</a></div>
     <div><b>GitHub Repository:</b> <a href="https://github.com/jevinjojo/AssetGate" target="_blank">https://github.com/jevinjojo/AssetGate ↗</a></div>
-    <div><b>Orchestration Script:</b> <code>packages/contracts/script/DeployAll.s.sol</code></div>
   </div>
 
-  <h2>1. Executive Summary & Value Proposition</h2>
+  <h2>1. Summary & Value Proposition</h2>
   <p>Real-World Assets (RWAs)—such as private credit funds, commercial real estate, structured debt, and treasuries—cannot be legally represented by standard ERC-20 tokens. Global regulatory frameworks require strict on-chain guarantees:</p>
   <ul>
     <li><b>Identity Verification:</b> Only KYC/AML-verified investors may hold or receive the asset.</li>
@@ -808,6 +799,10 @@
       <tr>
         <td><b>Live DApp Dashboard</b></td>
         <td><a href="https://asset-gate.vercel.app/" target="_blank"><code>https://asset-gate.vercel.app/</code> ↗</a></td>
+      </tr>
+      <tr>
+        <td><b>AGT Token on Explorer</b></td>
+        <td><a href="https://scan.botchain.ai/token/0x130ae863F28E1D990a975F700F536DDFc793dcf2" target="_blank"><code>https://scan.botchain.ai/token/0x130ae863F28E1D990a975F700F536DDFc793dcf2</code> ↗</a></td>
       </tr>
       <tr>
         <td><b>Live Indexer & Backend Health API</b></td>
