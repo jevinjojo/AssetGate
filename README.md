@@ -12,7 +12,7 @@
 
 ---
 
-## 🚀 Live Demo & Infrastructure
+## 🚀 Live Platform & Infrastructure
 
 The complete AssetGate protocol is deployed live on **BOT Chain Mainnet (Chain ID 677)** and production cloud infrastructure. 
 
@@ -26,12 +26,12 @@ The complete AssetGate protocol is deployed live on **BOT Chain Mainnet (Chain I
 
 ---
 
-## 🎥 Live Demo (In Action)
+## 🎥 Platform in Action
 
-The full ERC-3643 pipeline in action — broken into 4 short clips to demonstrate institutional compliance.
+The full ERC-3643 pipeline in action — broken into 4 focused clips highlighting institutional compliance.
 
 ### 1️⃣ Identity Gating & On-Chain KYC
-A demonstration of the simulated KYC onboarding flow. The investor submits their country code on the frontend, and the Node.js backend securely signs an ERC-734 identity claim, submits it on-chain to their `ONCHAINID`, and instantly whitelists the investor on the Identity Registry.
+The simulated KYC onboarding flow. The investor submits their country code on the frontend, and the Node.js backend securely signs an ERC-734 identity claim, submits it on-chain to their `ONCHAINID`, and instantly whitelists the investor on the Identity Registry.
 
 
 https://github.com/user-attachments/assets/062cd2ff-79ee-4cab-9c8f-b0098910eeb7
@@ -58,7 +58,7 @@ https://github.com/user-attachments/assets/cc0ea85b-57b8-4d43-b138-058373c7bdf4
 ---
 
 ### 4️⃣ Merkle Dividends & The Investor Portal
-Demonstrating off-chain calculation with on-chain execution. The issuer creates a snapshot of the current cap table and calculates a Merkle Tree distribution for a USDC dividend. A verified investor then logs into the portal and successfully claims their allocation via a pull-payment Merkle proof.
+Off-chain calculation with on-chain execution. The issuer creates a snapshot of the current cap table and calculates a Merkle Tree distribution for a USDC dividend. A verified investor then logs into the portal and successfully claims their allocation via a pull-payment Merkle proof.
 
 
 https://github.com/user-attachments/assets/50fc73e8-3205-4b59-a8c4-f37f98c04eb0
@@ -89,7 +89,7 @@ https://github.com/user-attachments/assets/50fc73e8-3205-4b59-a8c4-f37f98c04eb0
 | 🛡️ **Preflight Shield** | Off-chain simulation endpoint (`/api/v1/transfer-preflight`) executing identity & compliance rules in <15ms to save 100% of failed gas fees before invoking MetaMask. |
 | 💰 **Merkle Dividends** | Automated 3-step snapshot & Merkle tree payout engine for instant, pro-rata USDC distributions. |
 | 📡 **Live Event Indexer** | Viem-powered Node.js indexer that listens to ERC-3643 contract events, maps them to a relational schema, and stores them in PostgreSQL. |
-| 📊 **Issuer Dashboard** | A highly polished React/Vite dashboard for issuers to manage cap tables, mint tokens, and execute corporate actions. |
+| 📊 **Issuer Dashboard** | React/Vite dashboard for issuers to manage cap tables, mint tokens, and execute corporate actions. |
 | 🏛️ **Investor Portal** | A dedicated view for verified investors to view their eligible holdings and identity status. |
 | 🧪 **Exploit-Tested** | Contracts rigorously tested via Foundry (unit + fuzz + boundary) to ensure restricted countries or unverified users can never bypass gates. |
 | ☁️ **Cloud Native** | Built for production with Vercel, Render, and Neon PostgreSQL integrations out of the box. |
@@ -186,7 +186,7 @@ AssetGate/
 │       ├── src/
 │       │   ├── components/      # React: CapTable, IssuerControls, InvestorPortal
 │       │   ├── App.tsx          # Main dashboard entrypoint
-│       │   └── index.css        # Professional SaaS aesthetics
+│       │   └── index.css        # Core design system & styles
 │       └── package.json
 ├── ARCHITECTURE.md
 ├── FLOWS.md
@@ -215,7 +215,7 @@ Contributions are welcome — please open an issue first to discuss any major ch
 
 ## ⚠️ Disclaimer
 
-AssetGate is an educational/portfolio project demonstrating the ERC-3643 standard. KYC is simulated (the deployer acts as the trusted claim issuer). It is **not** audited, **not** production-ready, and **not** legal or financial advice. Deploying real securities involves substantial legal and regulatory obligations.
+AssetGate is a platform built on the ERC-3643 standard for BOT Chain. KYC is simulated (the deployer acts as the trusted claim issuer). It is **not** audited, **not** production-ready, and **not** legal or financial advice. Deploying real securities involves substantial legal and regulatory obligations.
 
 ---
 
