@@ -6,12 +6,18 @@ export const tokenAbi = [
   { type: "function", name: "forcedTransfer", stateMutability: "nonpayable", inputs: [{ name: "_from", type: "address" }, { name: "_to", type: "address" }, { name: "_amount", type: "uint256" }], outputs: [{ type: "bool" }] },
   { type: "function", name: "pause", stateMutability: "nonpayable", inputs: [], outputs: [] },
   { type: "function", name: "unpause", stateMutability: "nonpayable", inputs: [], outputs: [] },
+  { type: "function", name: "addAgent", stateMutability: "nonpayable", inputs: [{ name: "_agent", type: "address" }], outputs: [] },
+  { type: "function", name: "removeAgent", stateMutability: "nonpayable", inputs: [{ name: "_agent", type: "address" }], outputs: [] },
+  { type: "function", name: "isAgent", stateMutability: "view", inputs: [{ name: "_agent", type: "address" }], outputs: [{ type: "bool" }] },
 ] as const;
 
 export const identityRegistryAbi = [
   { type: "function", name: "registerIdentity", stateMutability: "nonpayable", inputs: [{ name: "_userAddress", type: "address" }, { name: "_identity", type: "address" }, { name: "_country", type: "uint16" }], outputs: [] },
   { type: "function", name: "deleteIdentity", stateMutability: "nonpayable", inputs: [{ name: "_userAddress", type: "address" }], outputs: [] },
   { type: "function", name: "updateCountry", stateMutability: "nonpayable", inputs: [{ name: "_userAddress", type: "address" }, { name: "_country", type: "uint16" }], outputs: [] },
+  { type: "function", name: "addAgent", stateMutability: "nonpayable", inputs: [{ name: "_agent", type: "address" }], outputs: [] },
+  { type: "function", name: "removeAgent", stateMutability: "nonpayable", inputs: [{ name: "_agent", type: "address" }], outputs: [] },
+  { type: "function", name: "isAgent", stateMutability: "view", inputs: [{ name: "_agent", type: "address" }], outputs: [{ type: "bool" }] },
 ] as const;
 
 export const tokenTransferAbi = [

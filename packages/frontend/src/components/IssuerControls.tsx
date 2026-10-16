@@ -24,8 +24,11 @@ export function IssuerControls() {
   const [fFrom, setFFrom] = useState(""); const [fTo, setFTo] = useState(""); const [fAmt, setFAmt] = useState("");
 
   const pause = useContractAction();
+  const agent = useContractAction();
+  const [agentAddr, setAgentAddr] = useState("");
 
   const T = config.token;
+  const IR = config.identityRegistry;
   const amt = (v: string) => parseUnits(v || "0", DECIMALS);
 
   return (
@@ -88,6 +91,18 @@ export function IssuerControls() {
             onClick={() => pause.writeContract({ address: T, abi: tokenAbi, functionName: "unpause", args: [] })}>Unpause</button>
         </div>
         <TxStatus {...pause} />
+      </section>
+
+      <section className="panel">
+        <h3>Agent roles (Admin)</h3>
+        <input placeholder="Wallet (0x…)" value={agentAddr} onChange={(e) => setAgentAddr(e.target.value)} />
+        <div className="row">
+          <button disabled={agent.isPending || agent.isConfirming}
+            onClick={() => agent.writeContract({ address: T, abi: tokenAbi, functionName: "addAgent", args: [agentAddr as `0x${string}`] })}>Grant Agent</button>
+          <button disabled={agent.isPending || agent.isConfirming}
+            onClick={() => agent.writeContract({ address: T, abi: tokenAbi, functionName: "removeAgent", args: [agentAddr as `0x${string}`] })}>Remove Agent</button>
+        </div>
+        <TxStatus {...agent} />
       </section>
     </div>
   );
