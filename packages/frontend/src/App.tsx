@@ -26,9 +26,9 @@ export default function App() {
     <div className="container">
       <header className="topbar">
         <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
-          <img src="/logo.png" alt="AssetGate Logo" style={{ width: "42px", height: "42px", objectFit: "contain" }} />
+          <img src="/logo.png" alt="AssetGate Logo" style={{ width: "48px", height: "48px", objectFit: "contain" }} />
           <div>
-            <h1 style={{ lineHeight: 1.1 }}>AssetGate</h1>
+            <h1 style={{ lineHeight: 1.15 }}>AssetGate</h1>
             <p className="subtitle mono" style={{ margin: "4px 0 0" }}>
             token{" "}
             <a
@@ -100,8 +100,8 @@ export default function App() {
 
       <footer className="app-footer">
         <div className="footer-brand">
-          <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "0.5rem" }}>
-            <img src="/logo.png" alt="AssetGate Logo" style={{ width: "26px", height: "26px", objectFit: "contain" }} />
+          <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "0.5rem" }}>
+            <img src="/logo.png" alt="AssetGate Logo" style={{ width: "32px", height: "32px", objectFit: "contain" }} />
             <h4 style={{ margin: 0 }}>AssetGate</h4>
           </div>
           <p>
