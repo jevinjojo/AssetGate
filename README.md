@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="packages/frontend/public/logo.png" width="110" alt="AssetGate Logo" />
+</p>
+
 # 🏛️ AssetGate
 
 > **Institutional-grade ERC-3643 Tokenization & Compliance Platform**
