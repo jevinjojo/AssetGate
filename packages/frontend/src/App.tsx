@@ -27,7 +27,9 @@ export default function App() {
       <header className="topbar">
         <div>
           <h1>AssetGate</h1>
-          <p className="subtitle mono">token {config.token.slice(0, 10)}… · chain {config.chainId}</p>
+          <p className="subtitle mono">
+            token <a href={`https://scan.botchain.ai/token/${config.token}`} target="_blank" rel="noreferrer" style={{ color: "var(--accent)", textDecoration: "underline" }}>{config.token.slice(0, 10)}…</a> · chain {config.chainId} · Powered by <a href="https://botchain.ai" target="_blank" rel="noreferrer" style={{ color: "var(--accent)", textDecoration: "underline" }}>BOT Chain</a> (<a href="https://scan.botchain.ai" target="_blank" rel="noreferrer" style={{ color: "var(--accent)", textDecoration: "underline" }}>BOTScan</a>)
+          </p>
         </div>
         <div className="row">
           <div className="tabs">
@@ -69,11 +71,31 @@ export default function App() {
       <footer className="app-footer">
         <div className="footer-brand">
           <h4>AssetGate</h4>
-          <p>Institutional-grade tokenization and compliance platform powered by the ERC-3643 standard.</p>
+          <p>Institutional-grade tokenization and compliance platform powered by the ERC-3643 standard on <a href="https://botchain.ai" target="_blank" rel="noreferrer" style={{ color: "var(--accent)", fontWeight: 600 }}>BOT Chain</a>.</p>
+          <div className="row" style={{ marginTop: "0.75rem", gap: "1.2rem", fontSize: "0.85rem", flexWrap: "wrap" }}>
+            <a href="https://botchain.ai" target="_blank" rel="noreferrer" style={{ color: "var(--accent)", fontWeight: 500, display: "inline-flex", alignItems: "center", gap: "4px" }}>
+              🌐 BOT Chain (botchain.ai) ↗
+            </a>
+            <a href="https://scan.botchain.ai" target="_blank" rel="noreferrer" style={{ color: "var(--accent)", fontWeight: 500, display: "inline-flex", alignItems: "center", gap: "4px" }}>
+              🔍 BOTScan (scan.botchain.ai) ↗
+            </a>
+            <a href="/brief.html" target="_blank" rel="noreferrer" style={{ color: "var(--text-muted)", textDecoration: "underline" }}>
+              Architecture Brief ↗
+            </a>
+          </div>
         </div>
         <div className="footer-meta">
           <span className="mono muted">Status: All systems operational</span>
-          <span className="mono muted">Network: {chainId === 677 ? "BOT Chain Mainnet (677)" : chainId === 11155111 ? "Sepolia Testnet" : `Chain ${chainId}`}</span>
+          <span className="mono muted">
+            Network: {chainId === 677 ? (
+              <a href="https://scan.botchain.ai" target="_blank" rel="noreferrer" style={{ color: "inherit", textDecoration: "underline" }}>
+                BOT Chain Mainnet (677)
+              </a>
+            ) : chainId === 11155111 ? "Sepolia Testnet" : `Chain ${chainId}`}
+          </span>
+          <span className="mono muted" style={{ fontSize: "0.80rem" }}>
+            Explorer: <a href="https://scan.botchain.ai" target="_blank" rel="noreferrer" style={{ color: "var(--accent)", textDecoration: "underline" }}>scan.botchain.ai ↗</a>
+          </span>
         </div>
       </footer>
     </div>
