@@ -25,9 +25,11 @@ export default function App() {
   return (
     <div className="container">
       <header className="topbar">
-        <div>
-          <h1>AssetGate</h1>
-          <p className="subtitle mono">
+        <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
+          <img src="/logo.png" alt="AssetGate Logo" style={{ width: "42px", height: "42px", objectFit: "contain" }} />
+          <div>
+            <h1 style={{ lineHeight: 1.1 }}>AssetGate</h1>
+            <p className="subtitle mono" style={{ margin: "4px 0 0" }}>
             token{" "}
             <a
               href={`https://scan.botchain.ai/token/${config.token}`}
@@ -58,7 +60,8 @@ export default function App() {
             )
           </p>
         </div>
-        <div className="row">
+      </div>
+      <div className="row">
           <div className="tabs">
             <button className={mode === "issuer" ? "active" : ""} onClick={() => setMode("issuer")}>Issuer</button>
             <button className={mode === "investor" ? "active" : ""} onClick={() => setMode("investor")}>Investor</button>
@@ -97,7 +100,10 @@ export default function App() {
 
       <footer className="app-footer">
         <div className="footer-brand">
-          <h4>AssetGate</h4>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "0.5rem" }}>
+            <img src="/logo.png" alt="AssetGate Logo" style={{ width: "26px", height: "26px", objectFit: "contain" }} />
+            <h4 style={{ margin: 0 }}>AssetGate</h4>
+          </div>
           <p>
             Institutional-grade tokenization and compliance platform powered by the ERC-3643 standard on{" "}
             <a
