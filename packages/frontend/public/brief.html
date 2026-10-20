@@ -585,20 +585,21 @@
       <div class="step-val">Backend Fastify service: (1) deploys an ERC-734/735 ONCHAINID contract, (2) signs an ECDSA claim for Topic 1 via ClaimIssuer, and (3) registers the investor in <code>IdentityRegistry.sol</code>.</div>
       <div class="step-label">Expected Screen:</div>
       <div class="step-val">
-        <span class="expected-banner">✓ Verified investor · Required claim — KYC: held · Country: 840 · ONCHAINID: 0x… ↗</span><br>
+        <span class="expected-banner">✓ Verified Investor · [ONCHAINID KYC] · Required claim: KYC held & verified · Identity: 0x… ↗</span><br>
         The Transfer panel instantly unlocks and becomes interactive.
       </div>
     </div>
   </div>
 
   <div class="walkthrough-step">
-    <h4><span class="step-badge">4</span> Portfolio Inspection & Balance Verification</h4>
+    <h4><span class="step-badge">4</span> Portfolio & Regulatory Escrow Inspection</h4>
     <div class="step-grid">
       <div class="step-label">Action:</div>
-      <div class="step-val">View the <b>Holdings</b> panel.</div>
+      <div class="step-val">View the <b>Holdings & Escrow</b> panel.</div>
       <div class="step-label">Expected Screen:</div>
       <div class="step-val">
-        <span class="expected-banner">AssetGate RWA Token (AGT) · Balance: 100.0 AGT · Frozen tokens: 0.0 · Wallet frozen: no</span>
+        <span class="expected-banner">AssetGate Token (AGT) · 🔓 Fully Liquid (or 🔒 Partial Escrow Active)</span><br>
+        Displays real-time breakdown of <b>Total Balance</b> vs <b>Liquid (Transferable)</b> tokens. When escrow locks are active, shows: <code>🔒 X AGT locked in regulatory escrow. Only Y AGT is transferable.</code>
       </div>
     </div>
   </div>
